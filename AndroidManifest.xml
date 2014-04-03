@@ -19,20 +19,14 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
-        <activity
-            android:name="com.bluecats.scratchingpost.SitesActivity"
-            android:label="@string/title_activity_sites" >
+        <activity android:name="com.bluecats.scratchingpost.SitesActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity
-            android:name="com.bluecats.scratchingpost.BeaconsActivity"
-            android:label="@string/title_activity_beacons" >
-        </activity>
+        <activity android:name="com.bluecats.scratchingpost.BeaconsActivity" />
 
         <service
             android:name="com.bluecats.sdk.BlueCatsService"
