@@ -3,16 +3,20 @@ bluecats-scratchingpost-android
 
 ##Getting Started
 
-####Step 1. Create your app using min Android SDK version 4.3, or you can go as low as 4.2 if using a Samsung Galaxy S4. 
+####Step 1.
+Create your app using min Android SDK version 4.3, or you can go as low as 4.2 if using a Samsung Galaxy S4. 
 
-####Step 2. Copy contents of the /libs folder into your project's /libs folder.
+####Step 2. 
+Copy contents of the /libs folder into your project's /libs folder.
 
-####Step 3. Generate your app token from the Blue Cats Dashboard.
+####Step 3. 
+Generate your app token from the Blue Cats Dashboard.
 
-####Step 4. Fire up the BlueCatsSDK in your applications main activity onCreate() method.
+####Step 4. 
+Fire up the BlueCatsSDK in your applications main activity onCreate() method.
 
 ``` java
-BlueCatsSDK.startPurringWithAppToken(getApplicationContext(), "AppToken");
+BlueCatsSDK.startPurringWithAppToken(getApplicationContext(), "YourBCAppToken");
 ```
 
 ## What the ...?
@@ -39,7 +43,7 @@ protected void onCreate(Bundle savedInstanceState) {
 
 	setContentView(R.layout.sites);
 		
-	BlueCatsSDK.startPurringWithAppToken(getApplicationContext(), "d79662a7-a01d-4e04-b8d7-cb4399df1464");
+	BlueCatsSDK.startPurringWithAppToken(getApplicationContext(), "YourBCAppToken");
 }	
 ```
 
