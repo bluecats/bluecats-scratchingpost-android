@@ -47,4 +47,170 @@ protected void onCreate(Bundle savedInstanceState) {
 }	
 ```
 
+You receive location events from the BCMicroLocationManager object.
 
+``` java
+@Override
+protected void onStart() {
+    super.onStart();
+
+    BCMicroLocationManager.getInstance().startUpdatingMicroLocation();
+}
+```
+
+If you don't like a shared micro-location manager, then create your very own BCMicroLocationManager.
+
+``` java
+private BCMicroLocationManager mMicroLocationManager;
+
+@Override
+protected void onStart() {
+    super.onStart();
+
+    mMicroLocationManager.startUpdatingMicroLocation();
+}
+```
+
+You can receive events from the SDK either by passing in a Handler...
+
+``` java
+private BCMicroLocationManager mMicroLocationManager;
+
+@Override
+protected void onStart() {
+    super.onStart();
+
+    BCMicroLocationManager.getInstance().setApplicationHandler(this, mMicroLocationManagerHandler);
+    BCMicroLocationManager.getInstance().startUpdatingMicroLocation();
+
+}
+
+private BCHandler<MainActivity> mMicroLocationManagerHandler = new BCHandler<MainActivity>(this) {
+    @Override
+    public void handleMessage(Message msg) {
+    	MainActivity reference = mReference.get();
+        if (reference != null) {
+        	final Bundle data = msg.getData();
+            switch (msg.what) {
+            case BlueCatsSDK.ACTION_DID_ENTER_SITE: {
+            	BCSite site = data.getParcelable(BlueCatsSDK.EXTRA_SITE);
+            	break;
+            }
+        	case BlueCatsSDK.ACTION_DID_EXIT_SITE: {
+            	BCSite site = data.getParcelable(BlueCatsSDK.EXTRA_SITE);
+                break;
+            }
+            case BlueCatsSDK.ACTION_DID_UPDATE_NEARBY_SITES: {
+            	ArrayList<BCSite> sites = data.getParcelableArrayList(BlueCatsSDK.EXTRA_SITES);
+            	break;
+            }
+            case BlueCatsSDK.ACTION_DID_RANGE_BEACONS_FOR_SITE_ID: {
+            	BCSite site = data.getParcelable(BlueCatsSDK.EXTRA_SITE);
+                ArrayList<BCBeacon> beacons = data.getParcelableArrayList(BlueCatsSDK.EXTRA_BEACONS);
+                break;
+            }
+         	default: break;
+     		}
+    	}
+	}
+};
+```
+...or registering BroadcastReceivers for each event...
+
+``` java
+private BCMicroLocationManager mMicroLocationManager;
+
+@Override
+protected void onStart() {
+    super.onStart();
+
+    LocalBroadcastManager.getInstance(this).registerReceiver(microLocationManagerDidEnterSite, new IntentFilter("com.bluecats.sdk.ACTION_DID_ENTER_SITE"));
+    LocalBroadcastManager.getInstance(this).registerReceiver(microLocationManagerDidExitSite, new IntentFilter("com.bluecats.sdk.ACTION_DID_EXIT_SITE"));
+    LocalBroadcastManager.getInstance(this).registerReceiver(microLocationManagerDidUpdateNearbySites, new IntentFilter("com.bluecats.sdk.ACTION_DID_UPDATE_NEARBY_SITES"));
+    LocalBroadcastManager.getInstance(this).registerReceiver(microLocationManagerDidRangeBeaconsForSiteID, new IntentFilter("com.bluecats.sdk.ACTION_DID_RANGE_BEACONS_FOR_SITE_ID"));
+
+    BCMicroLocationManager.getInstance().startUpdatingMicroLocation();
+}
+
+private BroadcastReceiver microLocationManagerDidEnterSite = new BroadcastReceiver() {
+    @Override
+    public void onReceive(Context context, Intent intent) {
+	    BCSite site = intent.getParcelableExtra(BlueCatsSDK.EXTRA_SITE);
+	}
+};
+
+private BroadcastReceiver microLocationManagerDidExitSite = new BroadcastReceiver() {
+	@Override
+	public void onReceive(Context context, Intent intent) {
+		BCSite site = intent.getParcelableExtra(BlueCatsSDK.EXTRA_SITE);
+   	};
+}
+
+private BroadcastReceiver microLocationManagerDidUpdateNearbySites = new BroadcastReceiver() {
+	@Override
+	public void onReceive(Context context, Intent intent) {
+    	ArrayList<BCSite> sites = intent.getParcelableArrayListExtra(BlueCatsSDK.EXTRA_SITES);
+    }
+};
+
+private BroadcastReceiver microLocationManagerDidRangeBeaconsForSiteID = new BroadcastReceiver() {
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        BCSite site = intent.getParcelableExtra(BlueCatsSDK.EXTRA_SITE);
+	    ArrayList<BCBeacon> beacons = intent.getParcelableArrayListExtra(BlueCatsSDK.EXTRA_BEACONS);
+    }
+};
+```
+
+Remember to unregister your broadcast receivers or remove your handler and stop receiving updates when your application / activity is ended. The SDK will clean up any dead references anyway, but best not to introduce memory leaks if you can help it.
+
+``` java
+@Override 
+protected void onStop() { 
+    super.onStop();
+		
+    BCMicroLocationManager.getInstance().stopUpdatingMicroLocation();
+    BCMicroLocationManager.getInstance().removeApplicationHandler(this);
+}
+```
+
+...or...
+
+
+``` java
+@Override 
+protected void onStop() { 
+    super.onStop();
+		
+    LocalBroadcastManager.getInstance(this).unregisterReceiver(microLocationManagerDidEnterSite);
+    LocalBroadcastManager.getInstance(this).unregisterReceiver(microLocationManagerDidExitSite);
+    LocalBroadcastManager.getInstance(this).unregisterReceiver(microLocationManagerDidUpdateNearbySites);
+    LocalBroadcastManager.getInstance(this).unregisterReceiver(microLocationManagerDidRangeBeaconsForSiteID);
+	
+    BCMicroLocationManager.getInstance().stopUpdatingMicroLocation();
+}
+```
+
+## AndroidManifest.xml
+
+Update your AndroidManifest.xml file to include the following permissions:
+
+``` xml
+<uses-permission android:name="android.permission.BLUETOOTH" />
+<uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+<uses-permission android:name="android.permission.INTERNET" />
+<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+```
+
+You will also need to add the BlueCatsService and the version for the Google Play Services (currently 4.0.30 (889083-30))
+
+``` xml
+<service
+    android:name="com.bluecats.sdk.BlueCatsService"
+    android:enabled="true" />
+
+<meta-data
+    android:name="com.google.android.gms.version"
+    android:value="4030500" />
+```
