@@ -72,7 +72,7 @@ public class SitesActivity extends Activity {
 		sitesNearby.addHeaderView(sitesNearbyHeader, "Site", false);
 		sitesNearby.setAdapter(mAdapterSitesNearby);
 
-		BlueCatsSDK.startPurringWithAppToken(getApplicationContext(), "d79662a7-a01d-4e04-b8d7-cb4399df1464");
+		BlueCatsSDK.startPurringWithAppToken(getApplicationContext(), "YOURAPPTOKEN");
 	}	
 
 	@Override
