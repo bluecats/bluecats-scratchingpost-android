@@ -28,9 +28,13 @@
         </activity>
         <activity android:name="com.bluecats.scratchingpost.BeaconsActivity" />
 
-        <service
-            android:name="com.bluecats.sdk.BlueCatsService"
-            android:enabled="true" />
+        <service android:name="com.bluecats.sdk.BlueCatsBLEService" >
+            <intent-filter>
+                <action android:name="com.bluecats.sdk.IBlueCatsBLEService" />
+            </intent-filter>
+        </service>
+        
+        <service android:name="com.bluecats.sdk.BlueCatsSDKService" />
 
         <meta-data
             android:name="com.google.android.gms.version"

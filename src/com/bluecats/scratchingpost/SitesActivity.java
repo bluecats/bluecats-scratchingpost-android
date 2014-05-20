@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import com.bluecats.scratchingpost.util.BeaconsAdapter;
 import com.bluecats.scratchingpost.util.SitesAdapter;
 import com.bluecats.sdk.BCBeacon;
 import com.bluecats.sdk.BCHandler;
