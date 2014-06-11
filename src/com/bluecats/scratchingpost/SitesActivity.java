@@ -6,24 +6,27 @@ import java.util.List;
 
 import com.bluecats.scratchingpost.util.SitesAdapter;
 import com.bluecats.sdk.BCBeacon;
-import com.bluecats.sdk.BCHandler;
+import com.bluecats.sdk.BCMicroLocation;
 import com.bluecats.sdk.BCMicroLocationManager;
 import com.bluecats.sdk.BCSite;
 import com.bluecats.sdk.BlueCatsSDK;
+import com.bluecats.sdk.IBlueCatsSDKCallback;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Message;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 public class SitesActivity extends Activity {
+	private static final String TAG = "SitesActivity";
+	
 	private static final int REQUEST_ENABLE_BLUETOOTH = 2;
+	private static final int NOTIFICATION_SITES = 3;
 
 	private BluetoothAdapter mBtAdapter = null;
 	private List<BCSite> mSitesInside;
@@ -48,35 +51,29 @@ public class SitesActivity extends Activity {
 		mSitesNearby = Collections.synchronizedList(new ArrayList<BCSite>());
 
 		ListView sitesInside = (ListView) findViewById(R.id.list_sites_inside);
-		View sitesInsideHeader = (View)getLayoutInflater().inflate(R.layout.sites_list_header, null);
-		TextView sitesInsideHeaderLabel = (TextView)sitesInsideHeader.findViewById(R.id.sites_header);
-		sitesInsideHeaderLabel.setText("Sites Inside");
 		mAdapterSitesInside = new SitesAdapter(this, mSitesInside);
-		sitesInside.addHeaderView(sitesInsideHeader, "Site", false);
 		sitesInside.setAdapter(mAdapterSitesInside);
 		sitesInside.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 				Intent beaconsIntent = new Intent(SitesActivity.this, BeaconsActivity.class);
-				beaconsIntent.putExtra(BlueCatsSDK.EXTRA_SITE, mAdapterSitesInside.getItem(position - 1));
+				beaconsIntent.putExtra(BlueCatsSDK.EXTRA_SITE, mAdapterSitesInside.getItem(position));
 				startActivity(beaconsIntent);
 			}
 		});
 		
 		ListView sitesNearby = (ListView) findViewById(R.id.list_sites_nearby);
-		View sitesNearbyHeader = (View)getLayoutInflater().inflate(R.layout.sites_list_header, null);
-		TextView sitesNearbyHeaderLabel = (TextView)sitesNearbyHeader.findViewById(R.id.sites_header);
-		sitesNearbyHeaderLabel.setText("Sites Nearby");
 		mAdapterSitesNearby = new SitesAdapter(this, mSitesNearby);
-		sitesNearby.addHeaderView(sitesNearbyHeader, "Site", false);
 		sitesNearby.setAdapter(mAdapterSitesNearby);
+		
+		BlueCatsSDK.startPurringWithAppToken(getApplicationContext(), "APP_TOKEN_HERE");
 
-		BlueCatsSDK.startPurringWithAppToken(getApplicationContext(), "YOURAPPTOKEN");
+		BCMicroLocationManager.getInstance().startUpdatingMicroLocation(mBlueCatsSDKCallback, SitesActivity.this);
 	}	
 
 	@Override
-	protected void onStart() {
-		super.onStart();
+	protected void onResume() {
+		super.onResume();
 
 		// enable bluetooth if not enabled
 		if (!mBtAdapter.isEnabled()) {
@@ -84,55 +81,39 @@ public class SitesActivity extends Activity {
 			startActivityForResult(enableBluetoothIntent, REQUEST_ENABLE_BLUETOOTH);
 		}
 
-		/*
-		LocalBroadcastManager.getInstance(this).registerReceiver(microLocationManagerDidEnterSite, new IntentFilter("com.bluecats.sdk.ACTION_DID_ENTER_SITE"));
-		LocalBroadcastManager.getInstance(this).registerReceiver(microLocationManagerDidExitSite, new IntentFilter("com.bluecats.sdk.ACTION_DID_EXIT_SITE"));
-		LocalBroadcastManager.getInstance(this).registerReceiver(microLocationManagerDidUpdateNearbySites, new IntentFilter("com.bluecats.sdk.ACTION_DID_UPDATE_NEARBY_SITES"));
-		LocalBroadcastManager.getInstance(this).registerReceiver(microLocationManagerDidRangeBeaconsForSiteID, new IntentFilter("com.bluecats.sdk.ACTION_DID_RANGE_BEACONS_FOR_SITE_ID"));
-		 */
-
-		BCMicroLocationManager.getInstance().setApplicationHandler(this, mMicroLocationManagerHandler);
-		BCMicroLocationManager.getInstance().startUpdatingMicroLocation();
+		BCMicroLocationManager.getInstance().didEnterForeground();
 	}
 
 	@Override 
-	protected void onStop() { 
-		super.onStop();
+	protected void onPause() { 
+		super.onPause();
 
-		/*
-		LocalBroadcastManager.getInstance(this).unregisterReceiver(microLocationManagerDidEnterSite);
-		LocalBroadcastManager.getInstance(this).unregisterReceiver(microLocationManagerDidExitSite);
-		LocalBroadcastManager.getInstance(this).unregisterReceiver(microLocationManagerDidUpdateNearbySites);
-		LocalBroadcastManager.getInstance(this).unregisterReceiver(microLocationManagerDidRangeBeaconsForSiteID);
-		 */
-
-		BCMicroLocationManager.getInstance().stopUpdatingMicroLocation();
-		BCMicroLocationManager.getInstance().removeApplicationHandler(this);
+		BCMicroLocationManager.getInstance().didEnterBackground();
 	}
-
-	private BCHandler<SitesActivity> mMicroLocationManagerHandler = new BCHandler<SitesActivity>(this) {
+	
+	private IBlueCatsSDKCallback mBlueCatsSDKCallback = new IBlueCatsSDKCallback() {
 		@Override
-		public void handleMessage(Message msg) {
-			SitesActivity reference = mReference.get();
-			if (reference != null) {
-				final Bundle data = msg.getData();
-				switch (msg.what) {
-				case BlueCatsSDK.ACTION_DID_ENTER_SITE: {
-					BCSite site = data.getParcelable(BlueCatsSDK.EXTRA_SITE);
-
+		public void onDidEnterSite(final BCSite site) {
+			runOnUiThread(new Runnable() {
+				@Override
+				public void run() {
 					if (!mSitesInside.contains(site)) {
 						mSitesInside.add(site);
 						mAdapterSitesInside.notifyDataSetChanged();
 					}
+					
 					if (mSitesNearby.remove(site)) {
 						mAdapterSitesNearby.notifyDataSetChanged();
 					}
-
-					break;
 				}
-				case BlueCatsSDK.ACTION_DID_EXIT_SITE: {
-					BCSite site = data.getParcelable(BlueCatsSDK.EXTRA_SITE);
+			});
+		}
 
+		@Override
+		public void onDidExitSite(final BCSite site) {
+			runOnUiThread(new Runnable() {
+				@Override
+				public void run() {
 					if (mSitesInside.remove(site)) {
 						mAdapterSitesInside.notifyDataSetChanged();
 					}
@@ -141,29 +122,34 @@ public class SitesActivity extends Activity {
 						mSitesNearby.add(site);
 						mAdapterSitesNearby.notifyDataSetChanged();
 					}
-					break;
 				}
-				case BlueCatsSDK.ACTION_DID_UPDATE_NEARBY_SITES: {
-					ArrayList<BCSite> sites = data.getParcelableArrayList(BlueCatsSDK.EXTRA_SITES);
+			});
+		}
 
+		@Override
+		public void onDidUpdateNearbySites(final List<BCSite> sites) {
+			runOnUiThread(new Runnable() {
+				@Override
+				public void run() {
 					mSitesNearby.clear();
 					for (BCSite site: sites) {
-						if (!mSitesNearby.contains(site)) {
+						if (!mSitesInside.contains(site) && !mSitesNearby.contains(site)) {
 							mSitesNearby.add(site);
 						}
 					}
 					mAdapterSitesNearby.notifyDataSetChanged();
-					break;
 				}
-				case BlueCatsSDK.ACTION_DID_RANGE_BEACONS_FOR_SITE_ID: {
-					BCSite site = data.getParcelable(BlueCatsSDK.EXTRA_SITE);
-					ArrayList<BCBeacon> beacons = data.getParcelableArrayList(BlueCatsSDK.EXTRA_BEACONS);
+			});
+		}
 
-					break;
-				}
-				default: break;
-				}
-			}
+		@Override
+		public void onDidRangeBeaconsForSiteID(BCSite site, List<BCBeacon> beacons) {
+			
+		}
+
+		@Override
+		public void onDidUpdateMicroLocation(List<BCMicroLocation> microLocations) {
+			
 		}
 	};
 }

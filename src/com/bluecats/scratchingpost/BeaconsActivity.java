@@ -2,35 +2,43 @@ package com.bluecats.scratchingpost;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import com.bluecats.scratchingpost.util.BeaconsAdapter;
-import com.bluecats.scratchingpost.util.SitesAdapter;
 import com.bluecats.sdk.BCBeacon.BCProximity;
 import com.bluecats.sdk.BCBeacon;
-import com.bluecats.sdk.BCHandler;
+import com.bluecats.sdk.BCCategory;
+import com.bluecats.sdk.BCLocalNotification;
+import com.bluecats.sdk.BCLocalNotificationManager;
+import com.bluecats.sdk.BCMicroLocation;
 import com.bluecats.sdk.BCMicroLocationManager;
 import com.bluecats.sdk.BCSite;
 import com.bluecats.sdk.BlueCatsSDK;
+import com.bluecats.sdk.IBlueCatsSDKCallback;
 
 import android.app.ActionBar;
 import android.app.ActionBar.Tab;
 import android.app.ActionBar.TabListener;
 import android.app.Activity;
 import android.app.FragmentTransaction;
-import android.bluetooth.BluetoothAdapter;
+import android.app.Notification;
 import android.content.Intent;
-import android.opengl.Visibility;
+import android.content.pm.PackageManager.NameNotFoundException;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
 import android.os.Bundle;
-import android.os.Message;
-import android.view.View;
 import android.view.Window;
 import android.widget.ListView;
-import android.widget.TextView;
 
 public class BeaconsActivity extends Activity implements TabListener {
 	private static final String EXTRA_SELECTED_TAB = "BeaconsActivity_SELECTED_TAB";
 	
+	// example local notification id
+	// each notification in your app will need a unique id
+	private static final int NOTIFICATION_ID = 11;
+
 	private ActionBar mActionBar;
 	private BCSite mSite;
 	private ListView mBeaconsImmediateList;
@@ -98,6 +106,45 @@ public class BeaconsActivity extends Activity implements TabListener {
 		mBeaconsUnknownList.setAdapter(mAdapterBeaconsUnknown);
 
 		setTabContent(mActionBar.getSelectedTab());
+		
+		/*
+		 * LOCAL NOTIFICATION EXAMPLE
+		 */
+		BCLocalNotification localNotification = new BCLocalNotification(NOTIFICATION_ID);
+		
+	    // can add an optional site to trigger in
+		//BCSite site = new BCSite();
+		//site.setSiteID("SITE_ID_HERE");
+		//site.setName("SITE_NAME_HERE");
+		//localNotification.setFireInSite(site);
+		
+		// optional time to trigger the event after, eg 10 seconds from now
+	    localNotification.setFireAfter(new Date(new Date().getTime() + (10 * 1000)));
+	    
+	    // add a category or several categories to trigger the notification
+	 	List<BCCategory> categories = new ArrayList<BCCategory>();
+	 	BCCategory category = new BCCategory();
+	 	category.setName("CATEGORY_NAME");
+	 	categories.add(category);
+	 	localNotification.setFireInCategories(categories);
+	 	
+	    // can add an optional proximity to trigger event
+	    localNotification.setFireInProximity(BCProximity.BC_PROXIMITY_IMMEDIATE);
+	    
+	    // set alert title and content
+	    localNotification.setAlertContentTitle("ALERT_TITLE");
+	    localNotification.setAlertContentText("ALERT_CONTENT");
+	    
+	    // launch icon and ringtone are optional. will just default ringtone and app icon for defaults
+	    localNotification.setAlertSmallIcon(R.drawable.ic_launcher);
+	    localNotification.setAlertSound(RingtoneManager.getActualDefaultRingtoneUri(BeaconsActivity.this, RingtoneManager.TYPE_NOTIFICATION));
+	    
+	    // this controls where the notification takes you. 
+	 	// can also contain a bundle or any extra info that you might want to unpack
+	 	Intent contentIntent = new Intent(BeaconsActivity.this, SitesActivity.class);
+	 	localNotification.setContentIntent(contentIntent);
+	    
+	    BCLocalNotificationManager.getInstance().scheduleLocalNotification(localNotification);
 	}
 
 	private void setTabContent(Tab tab) {
@@ -127,48 +174,63 @@ public class BeaconsActivity extends Activity implements TabListener {
 			mBeaconsFarList.setVisibility(ListView.INVISIBLE);
 		}
 	}
+	
+	private void removeExpiredBeacons(List<BCBeacon> beacons) {
+		// remove beacons that arent being ranged anymore
+		Iterator<BCBeacon> iteratorImmediate = mBeaconsImmediate.iterator();
+		while (iteratorImmediate.hasNext()) {
+			if (!beacons.contains(iteratorImmediate.next())) {
+				iteratorImmediate.remove();
+			}
+		}
+		
+		Iterator<BCBeacon> iteratorNear = mBeaconsNear.iterator();
+		while (iteratorNear.hasNext()) {
+			if (!beacons.contains(iteratorNear.next())) {
+				iteratorNear.remove();
+			}
+		}
+
+		Iterator<BCBeacon> iteratorFar = mBeaconsFar.iterator();
+		while (iteratorFar.hasNext()) {
+			if (!beacons.contains(iteratorFar.next())) {
+				iteratorFar.remove();
+			}
+		}
+
+		Iterator<BCBeacon> iteratorUnknown = mBeaconsUnknown.iterator();
+		while (iteratorUnknown.hasNext()) {
+			if (!beacons.contains(iteratorUnknown.next())) {
+				iteratorUnknown.remove();
+			}
+		}
+	}
 
 	@Override
-	protected void onStart() {
-		super.onStart();
+	protected void onResume() {
+		super.onResume();
 
-		/*
-		LocalBroadcastManager.getInstance(this).registerReceiver(microLocationManagerDidEnterSite, new IntentFilter("com.bluecats.sdk.ACTION_DID_ENTER_SITE"));
-		LocalBroadcastManager.getInstance(this).registerReceiver(microLocationManagerDidExitSite, new IntentFilter("com.bluecats.sdk.ACTION_DID_EXIT_SITE"));
-		LocalBroadcastManager.getInstance(this).registerReceiver(microLocationManagerDidUpdateNearbySites, new IntentFilter("com.bluecats.sdk.ACTION_DID_UPDATE_NEARBY_SITES"));
-		LocalBroadcastManager.getInstance(this).registerReceiver(microLocationManagerDidRangeBeaconsForSiteID, new IntentFilter("com.bluecats.sdk.ACTION_DID_RANGE_BEACONS_FOR_SITE_ID"));
-		 */
-
-		BCMicroLocationManager.getInstance().setApplicationHandler(this, mMicroLocationManagerHandler);
-		BCMicroLocationManager.getInstance().startUpdatingMicroLocation();
+		BCMicroLocationManager.getInstance().startUpdatingMicroLocation(mBlueCatsSDKCallback, BeaconsActivity.this);
 	}
 
 	@Override 
-	protected void onStop() { 
-		super.onStop();
+	protected void onPause() { 
+		super.onPause();
 
-		/*
-		LocalBroadcastManager.getInstance(this).unregisterReceiver(microLocationManagerDidEnterSite);
-		LocalBroadcastManager.getInstance(this).unregisterReceiver(microLocationManagerDidExitSite);
-		LocalBroadcastManager.getInstance(this).unregisterReceiver(microLocationManagerDidUpdateNearbySites);
-		LocalBroadcastManager.getInstance(this).unregisterReceiver(microLocationManagerDidRangeBeaconsForSiteID);
-		 */
-
-		BCMicroLocationManager.getInstance().stopUpdatingMicroLocation();
-		BCMicroLocationManager.getInstance().removeApplicationHandler(this);
+		BCMicroLocationManager.getInstance().stopUpdatingMicroLocation(mBlueCatsSDKCallback);
 	}
 
 	@Override 
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
-		
+
 		outState.putCharSequence(EXTRA_SELECTED_TAB, mActionBar.getSelectedTab().getText());
 	}
 
 	@Override 
 	protected void onRestoreInstanceState(Bundle savedInstanceState) {
 		super.onRestoreInstanceState(savedInstanceState);
-		
+
 		String selectedTabText = savedInstanceState.getCharSequence(EXTRA_SELECTED_TAB).toString();
 		for (int i = 0; i < mActionBar.getTabCount(); i++) {
 			Tab tab = mActionBar.getTabAt(i);
@@ -194,71 +256,45 @@ public class BeaconsActivity extends Activity implements TabListener {
 
 	}
 
-	private BCHandler<BeaconsActivity> mMicroLocationManagerHandler = new BCHandler<BeaconsActivity>(this) {
+	private IBlueCatsSDKCallback mBlueCatsSDKCallback = new IBlueCatsSDKCallback() {
 		@Override
-		public void handleMessage(Message msg) {
-			BeaconsActivity reference = mReference.get();
-			if (reference != null) {
-				final Bundle data = msg.getData();
-				switch (msg.what) {
-				case BlueCatsSDK.ACTION_DID_ENTER_SITE: {
-					BCSite site = data.getParcelable(BlueCatsSDK.EXTRA_SITE);
+		public void onDidEnterSite(BCSite site) {
 
-					break;
-				}
-				case BlueCatsSDK.ACTION_DID_EXIT_SITE: {
-					BCSite site = data.getParcelable(BlueCatsSDK.EXTRA_SITE);
+		}
 
-					break;
-				}
-				case BlueCatsSDK.ACTION_DID_UPDATE_NEARBY_SITES: {
-					ArrayList<BCSite> sites = data.getParcelableArrayList(BlueCatsSDK.EXTRA_SITES);
+		@Override
+		public void onDidExitSite(BCSite site) {
 
-					break;
-				}
-				case BlueCatsSDK.ACTION_DID_RANGE_BEACONS_FOR_SITE_ID: {
-					BCSite site = data.getParcelable(BlueCatsSDK.EXTRA_SITE);
-					ArrayList<BCBeacon> beacons = data.getParcelableArrayList(BlueCatsSDK.EXTRA_BEACONS);
+		}
 
+		@Override
+		public void onDidUpdateNearbySites(List<BCSite> sites) {
+
+		}
+
+		@Override
+		public void onDidRangeBeaconsForSiteID(final BCSite site, final List<BCBeacon> beacons) {
+			runOnUiThread(new Runnable() {
+				@Override
+				public void run() {
 					if (site.equals(mSite)) {
-						// if a beacon is missing from the ranged beacons
-						// remove it - probably can't hear it anymore
-						//removeStaleBeacons(beacons);
+						removeExpiredBeacons(beacons);
+						
 						mBeaconsImmediate.clear();
 						mBeaconsNear.clear();
 						mBeaconsFar.clear();
 						mBeaconsUnknown.clear();
-
+						
 						// update the beacons lists depending on proximity
 						for (BCBeacon beacon: beacons) {
 							if (beacon.getProximity() == BCProximity.BC_PROXIMITY_IMMEDIATE) {
-								//removeRangedBeaconImmediate(beacon);
 								mBeaconsImmediate.add(beacon);
-
-								//removeRangedBeaconNear(beacon);
-								//removeRangedBeaconFar(beacon);
-								//removeRangedBeaconUnknown(beacon);
 							} else if (beacon.getProximity() == BCProximity.BC_PROXIMITY_NEAR) {
-								//removeRangedBeaconNear(beacon);
 								mBeaconsNear.add(beacon);
-
-								//removeRangedBeaconImmediate(beacon);
-								//removeRangedBeaconFar(beacon);
-								//removeRangedBeaconUnknown(beacon);
 							} else if (beacon.getProximity() == BCProximity.BC_PROXIMITY_FAR) {
-								//removeRangedBeaconFar(beacon);
 								mBeaconsFar.add(beacon);
-
-								//removeRangedBeaconImmediate(beacon);
-								//removeRangedBeaconNear(beacon);
-								//removeRangedBeaconUnknown(beacon);
 							} else if (beacon.getProximity() == BCProximity.BC_PROXIMITY_UNKNOWN) {
-								//removeRangedBeaconUnknown(beacon);
 								mBeaconsUnknown.add(beacon);
-
-								//removeRangedBeaconImmediate(beacon);
-								//removeRangedBeaconNear(beacon);
-								//removeRangedBeaconFar(beacon);
 							}
 						}
 
@@ -267,11 +303,13 @@ public class BeaconsActivity extends Activity implements TabListener {
 						mAdapterBeaconsFar.notifyDataSetChanged();
 						mAdapterBeaconsUnknown.notifyDataSetChanged();
 					}
-					break;
 				}
-				default: break;
-				}
-			}
+			});
+		}
+
+		@Override
+		public void onDidUpdateMicroLocation(List<BCMicroLocation> microLocations) {
+			
 		}
 	};
 }

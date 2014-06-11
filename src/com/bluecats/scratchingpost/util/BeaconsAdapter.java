@@ -57,8 +57,8 @@ public class BeaconsAdapter extends BaseAdapter {
 		}
 
 		BCBeacon beacon = mBeacons.get(position);
-		holder.txtName.setText(beacon.getCompositeKey().substring(32));
-		holder.txtRSSI.setText(beacon.getRSSI().toString() + " rssi");
+		holder.txtName.setText(beacon.getIBeaconKey().substring(32));
+		holder.txtRSSI.setText(String.valueOf(beacon.getRSSI()) + " rssi");
 		String categories = "";
 		for (int i = 0; i < beacon.getCategories().length; i++) {
 			if (i > 0) {

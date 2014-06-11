@@ -3,6 +3,8 @@
 
     <string name="app_name">Scratching Post</string>
     <string name="title_activity_sites">Sites</string>
+    <string name="title_sites_inside">Sites Inside</string>
+    <string name="title_sites_nearby">Sites Nearby</string>
     <string name="title_activity_beacons">Beacons</string>
 
 </resources>
