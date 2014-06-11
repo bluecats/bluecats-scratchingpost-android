@@ -149,7 +149,15 @@ public class SitesActivity extends Activity {
 
 		@Override
 		public void onDidUpdateMicroLocation(List<BCMicroLocation> microLocations) {
+			BCMicroLocation microLocation = microLocations.get(microLocations.size() - 1);
 			
+			if (microLocation.getSites().size() > 0) {
+				BCSite site = microLocation.getSites().get(0);
+				
+				List<BCCategory> categories = microLocation.getCategoriesForSite(site, BCProximity.BC_PROXIMITY_IMMEDIATE);
+
+				List<BCBeacon> beacons = microLocation.getBeaconsForSite(site, BCProximity.BC_PROXIMITY_IMMEDIATE);
+			}
 		}
 	};
 }
