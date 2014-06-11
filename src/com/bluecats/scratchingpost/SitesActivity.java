@@ -6,6 +6,8 @@ import java.util.List;
 
 import com.bluecats.scratchingpost.util.SitesAdapter;
 import com.bluecats.sdk.BCBeacon;
+import com.bluecats.sdk.BCBeacon.BCProximity;
+import com.bluecats.sdk.BCCategory;
 import com.bluecats.sdk.BCMicroLocation;
 import com.bluecats.sdk.BCMicroLocationManager;
 import com.bluecats.sdk.BCSite;
