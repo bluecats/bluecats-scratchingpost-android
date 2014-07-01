@@ -311,7 +311,6 @@ Update your AndroidManifest.xml file to include the following permissions:
 <uses-permission android:name="android.permission.INTERNET" />
 <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 ```
 
 You will also need to add the BlueCatsService and the version of Google Play Services that you have hooked up to your app (Currently 4.4.52-000)
