@@ -148,6 +148,8 @@ public class BeaconsActivity extends Activity implements TabListener {
 	 	localNotification.setContentIntent(contentIntent);
 	    
 	    BCLocalNotificationManager.getInstance().scheduleLocalNotification(localNotification);
+
+		BCMicroLocationManager.getInstance().startUpdatingMicroLocation(mBlueCatsSDKCallback);
 	}
 
 	private void setTabContent(Tab tab) {
