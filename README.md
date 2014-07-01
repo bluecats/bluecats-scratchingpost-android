@@ -141,7 +141,7 @@ protected void onPause() {
 }
 ```
 
-It is advisable to call didEnterForeground and didEnterBackground as your activities come in to and exit the foregroun. This will help the SDK extend battery life by lowering the frequency of scanning while in the background.
+It is advisable to call didEnterForeground and didEnterBackground as your app comes in to and exits the foreground. This will help the SDK extend battery life by lowering the frequency of scanning while in the background.
 
 ``` java
 @Override
