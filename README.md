@@ -43,6 +43,9 @@ A BCMicroLocation object represents the sites and beacons in proximity to the us
 ## Examples
 
 ### Start Purring
+
+You receive location events from the BCMicroLocationManager object, passing in your callback and your activity.
+
 ``` java
 @Override
 protected void onCreate(Bundle savedInstanceState) {
@@ -51,17 +54,28 @@ protected void onCreate(Bundle savedInstanceState) {
 	setContentView(R.layout.sites);
 		
 	BlueCatsSDK.startPurringWithAppToken(getApplicationContext(), "YourBCAppToken");
+
+    BCMicroLocationManager.getInstance().startUpdatingMicroLocation(mBlueCatsSDKCallback);
 }	
 ```
 
-You receive location events from the BCMicroLocationManager object, passing in your callback and your activity.
+Notify the SDK when you enter the background, or come back in to the foreground. This will help the SDK update the scanning frequency depending on your app state, getting longer life out of the battery.
 
 ``` java
 @Override
-protected void onStart() {
-    super.onStart();
+protected void onResume() {
+    super.onResume();
 
-    BCMicroLocationManager.getInstance().startUpdatingMicroLocation(mBlueCatsSDKCallback, SitesActivity.this);
+    BCMicroLocationManager.getInstance().didEnterForeground();
+}
+```
+
+``` java
+@Override
+protected void onPause() {
+    super.onPause();
+
+    BCMicroLocationManager.getInstance().didEnterBackground();
 }
 ```
 
@@ -71,10 +85,10 @@ If you don't like a shared micro-location manager, then create your very own BCM
 private BCMicroLocationManager mMicroLocationManager;
 
 @Override
-protected void onStart() {
-    super.onStart();
+protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
 
-    mMicroLocationManager.startUpdatingMicroLocation(mBlueCatsSDKCallback, SitesActivity.this);
+    BCMicroLocationManager.getInstance().startUpdatingMicroLocation(mBlueCatsSDKCallback);
 }
 ```
 
@@ -84,52 +98,17 @@ You receive events from the SDK by passing in a callback.
 private IBlueCatsSDKCallback mBlueCatsSDKCallback = new IBlueCatsSDKCallback() {
     @Override
     public void onDidEnterSite(final BCSite site) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (!mSitesInside.contains(site)) {
-                    mSitesInside.add(site);
-                    mAdapterSitesInside.notifyDataSetChanged();
-                }
-                  
-                if (mSitesNearby.remove(site)) {
-                    mAdapterSitesNearby.notifyDataSetChanged();
-                }
-            }
-        });
+        
     }
 
     @Override
     public void onDidExitSite(final BCSite site) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (mSitesInside.remove(site)) {
-                    mAdapterSitesInside.notifyDataSetChanged();
-                }
-
-                if (!mSitesNearby.contains(site)) {
-                    mSitesNearby.add(site);
-                    mAdapterSitesNearby.notifyDataSetChanged();
-                }
-            }
-        });
+        
     }
 
     @Override
     public void onDidUpdateNearbySites(final List<BCSite> sites) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mSitesNearby.clear();
-                for (BCSite site: sites) {
-                    if (!mSitesInside.contains(site) && !mSitesNearby.contains(site)) {
-                        mSitesNearby.add(site);
-                    }
-                }
-                mAdapterSitesNearby.notifyDataSetChanged();
-            }
-        });
+        
     }
 
     @Override
@@ -139,19 +118,19 @@ private IBlueCatsSDKCallback mBlueCatsSDKCallback = new IBlueCatsSDKCallback() {
 
     @Override
     public void onDidUpdateMicroLocation(List<BCMicroLocation> microLocations) {
-            
+        
     }
 };
 ```
 
-You can start receiving events from the SDK by calling startUpdatingMicroLocation on the onResume() method of your activity and stop receiving events by calling stopUpdatingMicroLocation on the onPause() method of your activity and passing in your callback to unregister.
+You can call stopUpdatingMicroLocation if you want to explicity stop receiving updates from your BCMicroLocationManager at any time. This will unregister the callback from the SDK. Simply call startUpdatingMicroLocation to begin receiving updates again. 
 
 ``` java
 @Override
 protected void onResume() {
     super.onResume();
 
-    BCMicroLocationManager.getInstance().startUpdatingMicroLocation(mBlueCatsSDKCallback, BeaconsActivity.this);
+    BCMicroLocationManager.getInstance().startUpdatingMicroLocation(mBlueCatsSDKCallback);
 }
 
 @Override 
@@ -162,7 +141,7 @@ protected void onPause() {
 }
 ```
 
-Alternatively you can continue to receive events for your app in the background and simply notify the SDK that your app has entered the background. The SDK will scan for beacons at different frequencies depending on whether your app is in the foreground or the background, with the foreground scanning at a higher freqeuncy and therefore extending battery life.
+It is advisable to call didEnterForeground and didEnterBackground as your activities come in to and exit the foregroun. This will help the SDK extend battery life by lowering the frequency of scanning while in the background.
 
 ``` java
 @Override
@@ -177,6 +156,17 @@ protected void onPause() {
     super.onPause();
 
     BCMicroLocationManager.getInstance().didEnterBackground();
+}
+```
+
+You can also make an explicit call to requestStateForSites to trigger any onDidEnterSite, onDidExitSite or onDidUpdateNearbySites events that might have occurred from within the background. This is automatically called with the didEnterForeground method.
+
+``` java
+@Override
+protected void onResume() {
+    super.onResume();
+
+    BCMicroLocationManager.getInstance().requestStateForSites();
 }
 ```
 
@@ -299,6 +289,18 @@ localNotification.setContentIntent(contentIntent);
 BCLocalNotificationManager.getInstance().scheduleLocalNotification(localNotification);
 ```
 
+You can also enable the SDK Service to run from boot by adding the following to your AndroidManifest.xml.
+
+``` xml
+<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
+<receiver android:name="com.bluecats.sdk.BlueCatsSDKServiceReceiver" >
+    <intent-filter>
+        <action android:name="android.intent.action.BOOT_COMPLETED" />
+    </intent-filter>
+</receiver>
+```
+
 ## AndroidManifest.xml
 
 Update your AndroidManifest.xml file to include the following permissions:
@@ -309,6 +311,7 @@ Update your AndroidManifest.xml file to include the following permissions:
 <uses-permission android:name="android.permission.INTERNET" />
 <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 ```
 
 You will also need to add the BlueCatsService and the version of Google Play Services that you have hooked up to your app (Currently 4.4.52-000)
