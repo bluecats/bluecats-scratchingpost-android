@@ -29,10 +29,13 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Window;
 import android.widget.ListView;
 
 public class BeaconsActivity extends Activity implements TabListener {
+	private static final String TAG = "BeaconsActivity";
+	
 	private static final String EXTRA_SELECTED_TAB = "BeaconsActivity_SELECTED_TAB";
 	
 	// example local notification id
@@ -210,14 +213,18 @@ public class BeaconsActivity extends Activity implements TabListener {
 	protected void onResume() {
 		super.onResume();
 
-		BCMicroLocationManager.getInstance().startUpdatingMicroLocation(mBlueCatsSDKCallback, BeaconsActivity.this);
+		Log.d(TAG, "onResume");
+
+		BCMicroLocationManager.getInstance().didEnterForeground();
 	}
 
 	@Override 
 	protected void onPause() { 
 		super.onPause();
 
-		BCMicroLocationManager.getInstance().stopUpdatingMicroLocation(mBlueCatsSDKCallback);
+		Log.d(TAG, "onPause");
+
+		BCMicroLocationManager.getInstance().didEnterBackground();
 	}
 
 	@Override 

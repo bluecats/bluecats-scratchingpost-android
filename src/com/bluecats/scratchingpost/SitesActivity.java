@@ -70,7 +70,7 @@ public class SitesActivity extends Activity {
 		
 		BlueCatsSDK.startPurringWithAppToken(getApplicationContext(), "APP_TOKEN_HERE");
 
-		BCMicroLocationManager.getInstance().startUpdatingMicroLocation(mBlueCatsSDKCallback, SitesActivity.this);
+		BCMicroLocationManager.getInstance().startUpdatingMicroLocation(mBlueCatsSDKCallback);
 	}	
 
 	@Override
@@ -156,9 +156,17 @@ public class SitesActivity extends Activity {
 			if (microLocation.getSites().size() > 0) {
 				BCSite site = microLocation.getSites().get(0);
 				
-				List<BCCategory> categories = microLocation.getCategoriesForSite(site, BCProximity.BC_PROXIMITY_IMMEDIATE);
+				try {
+					List<BCCategory> categories = microLocation.getCategoriesForSite(site, BCProximity.BC_PROXIMITY_IMMEDIATE);
+				} catch (Exception e) {
+					Log.e(TAG, e.toString());
+				}
 
-				List<BCBeacon> beacons = microLocation.getBeaconsForSite(site, BCProximity.BC_PROXIMITY_IMMEDIATE);
+				try {
+					List<BCBeacon> beacons = microLocation.getBeaconsForSite(site, BCProximity.BC_PROXIMITY_IMMEDIATE);
+				} catch (Exception e) {
+					Log.e(TAG, e.toString());
+				}
 			}
 		}
 	};
