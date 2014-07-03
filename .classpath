@@ -10,8 +10,8 @@
 	<classpathentry kind="lib" path="libs/org.restlet.ext.net.jar"/>
 	<classpathentry kind="lib" path="libs/org.restlet.ext.ssl.jar"/>
 	<classpathentry kind="lib" path="libs/org.restlet.jar"/>
+	<classpathentry kind="lib" path="libs/android-support-v13.jar"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="gen"/>
-	<classpathentry kind="lib" path="libs/android-support-v13.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

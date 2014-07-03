@@ -15,9 +15,13 @@ import com.bluecats.sdk.BlueCatsSDK;
 import com.bluecats.sdk.IBlueCatsSDKCallback;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -26,11 +30,9 @@ import android.widget.Toast;
 
 public class SitesActivity extends Activity {
 	private static final String TAG = "SitesActivity";
-	
-	private static final int REQUEST_ENABLE_BLUETOOTH = 2;
-	private static final int NOTIFICATION_SITES = 3;
 
-	private BluetoothAdapter mBtAdapter = null;
+	private BluetoothAdapter mBtAdapter;
+	private LocationManager mLocationManager;
 	private List<BCSite> mSitesInside;
 	private List<BCSite> mSitesNearby;
 	private SitesAdapter mAdapterSitesInside;
@@ -41,13 +43,32 @@ public class SitesActivity extends Activity {
 		super.onCreate(savedInstanceState);
 
 		setContentView(R.layout.sites);
-		
+
 		mBtAdapter = BluetoothAdapter.getDefaultAdapter();
+		mLocationManager = (LocationManager)getSystemService(LOCATION_SERVICE);
+		
 		if (mBtAdapter == null) {
 			Toast.makeText(this, "Bluetooth is not available", Toast.LENGTH_LONG).show();
 			finish();
 			return;
 		}
+
+		// enable bluetooth if not enabled
+		if (!mBtAdapter.isEnabled()) {
+			AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(SitesActivity.this);
+			alertDialogBuilder.setMessage("This app requires Bluetooth to be enabled. Would you like to enable Bluetooth now?")
+			.setPositiveButton("Yes", mBluetoothDialogClickListener)
+			.setNegativeButton("No", mBluetoothDialogClickListener).show();
+		}
+
+		// enable locations services if not enabled
+		if (!mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) && 
+				!mLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+			AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(SitesActivity.this);
+			alertDialogBuilder.setMessage("This app requires Location Services to be enabled. Would you like to enable Location Services now?")
+			.setPositiveButton("Yes", mLocationServicesClickListener)
+			.setNegativeButton("No", mLocationServicesClickListener).show();
+		} 
 
 		mSitesInside = Collections.synchronizedList(new ArrayList<BCSite>());
 		mSitesNearby = Collections.synchronizedList(new ArrayList<BCSite>());
@@ -77,12 +98,6 @@ public class SitesActivity extends Activity {
 	protected void onResume() {
 		super.onResume();
 
-		// enable bluetooth if not enabled
-		if (!mBtAdapter.isEnabled()) {
-			Intent enableBluetoothIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-			startActivityForResult(enableBluetoothIntent, REQUEST_ENABLE_BLUETOOTH);
-		}
-
 		BCMicroLocationManager.getInstance().didEnterForeground();
 	}
 
@@ -92,6 +107,37 @@ public class SitesActivity extends Activity {
 
 		BCMicroLocationManager.getInstance().didEnterBackground();
 	}
+	
+	private DialogInterface.OnClickListener mBluetoothDialogClickListener = new DialogInterface.OnClickListener() {
+	    @Override
+	    public void onClick(DialogInterface dialog, int which) {
+	        switch (which){
+	        case DialogInterface.BUTTON_POSITIVE:
+				Intent enableBluetoothIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+				startActivity(enableBluetoothIntent);
+	            break;
+	        case DialogInterface.BUTTON_NEGATIVE:
+	            // do nothing
+	            break;
+	        }
+	    }
+	};
+	
+	private DialogInterface.OnClickListener mLocationServicesClickListener = new DialogInterface.OnClickListener() {
+	    @Override
+	    public void onClick(DialogInterface dialog, int which) {
+	        switch (which){
+	        case DialogInterface.BUTTON_POSITIVE:
+				Intent enableLocationServicesIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+				startActivity(enableLocationServicesIntent);
+	            break;
+
+	        case DialogInterface.BUTTON_NEGATIVE:
+	            // do nothing
+	            break;
+	        }
+	    }
+	};
 	
 	private IBlueCatsSDKCallback mBlueCatsSDKCallback = new IBlueCatsSDKCallback() {
 		@Override
