@@ -3,6 +3,7 @@ package com.bluecats.scratchingpost;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import com.bluecats.scratchingpost.util.SitesAdapter;
 import com.bluecats.sdk.BCBeacon;
@@ -199,9 +200,9 @@ public class SitesActivity extends Activity {
 		public void onDidUpdateMicroLocation(List<BCMicroLocation> microLocations) {
 			BCMicroLocation microLocation = microLocations.get(microLocations.size() - 1);
 			
-			if (microLocation.getSites().size() > 0) {
-				BCSite site = microLocation.getSites().get(0);
-				
+			Map<String, List<BCBeacon>> beaconsForSiteID = microLocation.getBeaconsForSiteID();
+			
+			for (BCSite site: microLocation.getSites()) {
 				try {
 					List<BCCategory> categories = microLocation.getCategoriesForSite(site, BCProximity.BC_PROXIMITY_IMMEDIATE);
 				} catch (Exception e) {
@@ -214,6 +215,11 @@ public class SitesActivity extends Activity {
 					Log.e(TAG, e.toString());
 				}
 			}
+		}
+
+		@Override
+		public void onDidNotify(int id) {
+
 		}
 	};
 }

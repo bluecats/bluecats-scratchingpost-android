@@ -320,5 +320,10 @@ public class BeaconsActivity extends Activity implements TabListener {
 		public void onDidUpdateMicroLocation(List<BCMicroLocation> microLocations) {
 			
 		}
+
+		@Override
+		public void onDidNotify(int id) {
+
+		}
 	};
 }

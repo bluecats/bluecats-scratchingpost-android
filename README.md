@@ -38,7 +38,7 @@ A BCBeacon object represents a beacon device. Beacon devices are uniquely identi
 
 ####BCMicroLocation
 
-A BCMicroLocation object represents the sites and beacons in proximity to the user. When your app needs some context it can query a micro-location for a sites beacons and categories by proximity. Its all the beacon goodness wrapped up into a tiny object. And integrating micro-locations with your app is simple. Simply observe the BCMicroLocationManager did update micro location event.
+A BCMicroLocation object represents the sites and beacons in proximity to the user. When your app needs some context it can query a micro-location for a site's beacons and categories by proximity. Its all the beacon goodness wrapped up into a tiny object. And integrating micro-locations with your app is simple. Simply observe the BCMicroLocationManager did update micro location event.
 
 ## Examples
 
@@ -120,6 +120,11 @@ private IBlueCatsSDKCallback mBlueCatsSDKCallback = new IBlueCatsSDKCallback() {
     public void onDidUpdateMicroLocation(List<BCMicroLocation> microLocations) {
         
     }
+
+    @Override
+    public void onDidNotify(int id) {
+
+    }
 };
 ```
 
@@ -159,7 +164,7 @@ protected void onPause() {
 }
 ```
 
-You can also make an explicit call to requestStateForSites to trigger any onDidEnterSite, onDidExitSite or onDidUpdateNearbySites events that might have occurred from within the background. This is automatically called with the didEnterForeground method.
+You can also make an explicit call to requestStateForSites to trigger any onDidEnterSite, onDidExitSite or onDidUpdateNearbySites events that might have occurred from within the background. This is called by default within the didEnterForeground method.
 
 ``` java
 @Override
@@ -313,12 +318,12 @@ Update your AndroidManifest.xml file to include the following permissions:
 <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 ```
 
-You will also need to add the BlueCatsService and the version of Google Play Services that you have hooked up to your app (Currently 4.4.52-000)
+You will also need to add the BlueCatsService and the version of Google Play Services that you have hooked up to your app (Currently 5.0.77-000)
 
 ``` xml
 <service android:name="com.bluecats.sdk.BlueCatsSDKService" />
 
 <meta-data
     android:name="com.google.android.gms.version"
-    android:value="4452000" />
+    android:value="5077000" />
 ```
