@@ -2,7 +2,9 @@ package com.bluecats.scratchingpost;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map.Entry;
 
 import com.bluecats.scratchingpost.util.BeaconsSnifferAdapter;
 import com.bluecats.sdk.BCBeacon;
@@ -10,6 +12,7 @@ import com.bluecats.sdk.BCMicroLocation;
 import com.bluecats.sdk.BCMicroLocationManager;
 import com.bluecats.sdk.BCSite;
 import com.bluecats.sdk.IBlueCatsSDKCallback;
+import com.bluecats.sdk.BCBeacon.BCProximity;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -83,6 +86,9 @@ public class BeaconSnifferActivity extends Activity {
 
 		@Override
 		public void onDidRangeBeaconsForSiteID(final BCSite site, final List<BCBeacon> beacons) {
+			// to enable this method call BCMicroLocationManager.getInstance().startRangingBeaconsInSite(site)
+			// from the onDidEnterSite callback.
+			
 			runOnUiThread(new Runnable() {
 				@Override
 				public void run() {
@@ -102,8 +108,32 @@ public class BeaconSnifferActivity extends Activity {
 		}
 
 		@Override
-		public void onDidUpdateMicroLocation(List<BCMicroLocation> microLocations) {
-			
+		public void onDidUpdateMicroLocation(final List<BCMicroLocation> microLocations) {
+			runOnUiThread(new Runnable() {
+				@Override
+				public void run() {
+					if (microLocations.size() > 0) {
+						BCMicroLocation microLocation = microLocations.get(microLocations.size() - 1);
+						
+						Iterator<Entry<String, List<BCBeacon>>> iterator = microLocation.getBeaconsForSiteID().entrySet().iterator();
+						while (iterator.hasNext()) {
+							Entry<String, List<BCBeacon>> entry = iterator.next();
+							
+							for (BCBeacon beacon: entry.getValue()) {
+								if (mBeacons.contains(beacon)) {
+									BCBeacon beaconToUpdate = mBeacons.get(mBeacons.indexOf(beacon));
+									beaconToUpdate.setRSSI(beacon.getRSSI());
+									beaconToUpdate.setProximity(beacon.getProximity());
+								} else {
+									mBeacons.add(beacon);
+								}
+							}
+						}
+						
+						mAdapterBeacons.notifyDataSetChanged();
+					}
+				}
+			});
 		}
 
 		@Override

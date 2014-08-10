@@ -28,6 +28,7 @@
             </intent-filter>
         </activity>
         <activity android:name="com.bluecats.scratchingpost.BeaconsActivity" />
+        <activity android:name="com.bluecats.scratchingpost.BeaconSnifferActivity" />
 
         <service android:name="com.bluecats.sdk.BlueCatsSDKService" />
 

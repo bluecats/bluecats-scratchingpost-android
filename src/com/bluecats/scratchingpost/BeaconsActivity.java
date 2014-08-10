@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map.Entry;
 
 import com.bluecats.scratchingpost.util.BeaconsAdapter;
 import com.bluecats.sdk.BCBeacon.BCProximity;
@@ -30,7 +31,9 @@ import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.view.Window;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 public class BeaconsActivity extends Activity implements TabListener {
@@ -98,15 +101,55 @@ public class BeaconsActivity extends Activity implements TabListener {
 		mBeaconsImmediateList = (ListView) findViewById(R.id.list_beacons_immediate);
 		mAdapterBeaconsImmediate = new BeaconsAdapter(this, mBeaconsImmediate);
 		mBeaconsImmediateList.setAdapter(mAdapterBeaconsImmediate);
+		mBeaconsImmediateList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+				Intent beaconIntent = new Intent(BeaconsActivity.this, BeaconSnifferActivity.class);
+				Bundle beaconBundle = new Bundle();
+				beaconBundle.putParcelable(BlueCatsSDK.EXTRA_BEACON, mAdapterBeaconsImmediate.getItem(position));
+				beaconIntent.putExtras(beaconBundle);
+				startActivity(beaconIntent);
+			}
+		});
 		mBeaconsNearList = (ListView) findViewById(R.id.list_beacons_near);
 		mAdapterBeaconsNear = new BeaconsAdapter(this, mBeaconsNear);
 		mBeaconsNearList.setAdapter(mAdapterBeaconsNear);
+		mBeaconsNearList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+				Intent beaconIntent = new Intent(BeaconsActivity.this, BeaconSnifferActivity.class);
+				Bundle beaconBundle = new Bundle();
+				beaconBundle.putParcelable(BlueCatsSDK.EXTRA_BEACON, mAdapterBeaconsNear.getItem(position));
+				beaconIntent.putExtras(beaconBundle);
+				startActivity(beaconIntent);
+			}
+		});
 		mBeaconsFarList = (ListView) findViewById(R.id.list_beacons_far);
 		mAdapterBeaconsFar = new BeaconsAdapter(this, mBeaconsFar);
 		mBeaconsFarList.setAdapter(mAdapterBeaconsFar);
+		mBeaconsFarList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+				Intent beaconIntent = new Intent(BeaconsActivity.this, BeaconSnifferActivity.class);
+				Bundle beaconBundle = new Bundle();
+				beaconBundle.putParcelable(BlueCatsSDK.EXTRA_BEACON, mAdapterBeaconsFar.getItem(position));
+				beaconIntent.putExtras(beaconBundle);
+				startActivity(beaconIntent);
+			}
+		});
 		mBeaconsUnknownList= (ListView) findViewById(R.id.list_beacons_unknown);
 		mAdapterBeaconsUnknown = new BeaconsAdapter(this, mBeaconsUnknown);
 		mBeaconsUnknownList.setAdapter(mAdapterBeaconsUnknown);
+		mBeaconsUnknownList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+				Intent beaconIntent = new Intent(BeaconsActivity.this, BeaconSnifferActivity.class);
+				Bundle beaconBundle = new Bundle();
+				beaconBundle.putParcelable(BlueCatsSDK.EXTRA_BEACON, mAdapterBeaconsUnknown.getItem(position));
+				beaconIntent.putExtras(beaconBundle);
+				startActivity(beaconIntent);
+			}
+		});
 
 		setTabContent(mActionBar.getSelectedTab());
 		
@@ -283,6 +326,9 @@ public class BeaconsActivity extends Activity implements TabListener {
 
 		@Override
 		public void onDidRangeBeaconsForSiteID(final BCSite site, final List<BCBeacon> beacons) {
+			// to enable this method call BCMicroLocationManager.getInstance().startRangingBeaconsInSite(site)
+			// from the onDidEnterSite callback.
+			
 			runOnUiThread(new Runnable() {
 				@Override
 				public void run() {
@@ -317,8 +363,49 @@ public class BeaconsActivity extends Activity implements TabListener {
 		}
 
 		@Override
-		public void onDidUpdateMicroLocation(List<BCMicroLocation> microLocations) {
-			
+		public void onDidUpdateMicroLocation(final List<BCMicroLocation> microLocations) {
+			runOnUiThread(new Runnable() {
+				@Override
+				public void run() {
+					if (microLocations.size() > 0) {
+						BCMicroLocation microLocation = microLocations.get(microLocations.size() - 1);
+						
+						Iterator<Entry<String, List<BCBeacon>>> iterator = microLocation.getBeaconsForSiteID().entrySet().iterator();
+						while (iterator.hasNext()) {
+							Entry<String, List<BCBeacon>> entry = iterator.next();
+							
+							if (entry.getKey().equals(mSite.getSiteID())) {
+								List<BCBeacon> beacons = entry.getValue();
+								
+								removeExpiredBeacons(beacons);
+								
+								mBeaconsImmediate.clear();
+								mBeaconsNear.clear();
+								mBeaconsFar.clear();
+								mBeaconsUnknown.clear();
+
+								// update the beacons lists depending on proximity
+								for (BCBeacon beacon: beacons) {
+									if (beacon.getProximity() == BCProximity.BC_PROXIMITY_IMMEDIATE) {
+										mBeaconsImmediate.add(beacon);
+									} else if (beacon.getProximity() == BCProximity.BC_PROXIMITY_NEAR) {
+										mBeaconsNear.add(beacon);
+									} else if (beacon.getProximity() == BCProximity.BC_PROXIMITY_FAR) {
+										mBeaconsFar.add(beacon);
+									} else if (beacon.getProximity() == BCProximity.BC_PROXIMITY_UNKNOWN) {
+										mBeaconsUnknown.add(beacon);
+									}
+								}
+
+								mAdapterBeaconsImmediate.notifyDataSetChanged();
+								mAdapterBeaconsNear.notifyDataSetChanged();
+								mAdapterBeaconsFar.notifyDataSetChanged();
+								mAdapterBeaconsUnknown.notifyDataSetChanged();
+							}
+						}
+					}
+				}
+			});
 		}
 
 		@Override
