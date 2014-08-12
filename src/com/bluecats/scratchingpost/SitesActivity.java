@@ -182,10 +182,13 @@ public class SitesActivity extends Activity {
 				public void run() {
 					mSitesNearby.clear();
 					for (BCSite site: sites) {
-						if (!mSitesInside.contains(site) && !mSitesNearby.contains(site)) {
+						if (mSitesInside.contains(site)) {
+							mSitesInside.get(mSitesInside.indexOf(site)).setBeaconCount(site.getBeaconCount());
+						} else if (!mSitesNearby.contains(site)) {
 							mSitesNearby.add(site);
 						}
 					}
+					mAdapterSitesInside.notifyDataSetChanged();
 					mAdapterSitesNearby.notifyDataSetChanged();
 				}
 			});
