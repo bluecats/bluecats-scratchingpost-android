@@ -88,7 +88,7 @@ private BCMicroLocationManager mMicroLocationManager;
 protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
-    BCMicroLocationManager.getInstance().startUpdatingMicroLocation(mBlueCatsSDKCallback);
+    BCMicroLocationManager.getInstance().startUpdatingMicroLocation(mMicroLocationManagerCallback);
 }
 ```
 
