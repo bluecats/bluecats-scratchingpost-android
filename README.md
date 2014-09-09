@@ -55,7 +55,7 @@ protected void onCreate(Bundle savedInstanceState) {
 		
 	BlueCatsSDK.startPurringWithAppToken(getApplicationContext(), "YourBCAppToken");
 
-    BCMicroLocationManager.getInstance().startUpdatingMicroLocation(mBlueCatsSDKCallback);
+    BCMicroLocationManager.getInstance().startUpdatingMicroLocation(mMicroLocationManagerCallback);
 }	
 ```
 
@@ -95,7 +95,7 @@ protected void onCreate(Bundle savedInstanceState) {
 You receive events from the SDK by passing in a callback.
 
 ``` java
-private IBlueCatsSDKCallback mBlueCatsSDKCallback = new IBlueCatsSDKCallback() {
+private BCMicroLocationManagerCallback mMicroLocationManagerCallback = new BCMicroLocationManagerCallback() {
     @Override
     public void onDidEnterSite(final BCSite site) {
         
@@ -120,11 +120,6 @@ private IBlueCatsSDKCallback mBlueCatsSDKCallback = new IBlueCatsSDKCallback() {
     public void onDidUpdateMicroLocation(List<BCMicroLocation> microLocations) {
         
     }
-
-    @Override
-    public void onDidNotify(int id) {
-
-    }
 };
 ```
 
@@ -135,14 +130,14 @@ You can call stopUpdatingMicroLocation if you want to explicity stop receiving u
 protected void onResume() {
     super.onResume();
 
-    BCMicroLocationManager.getInstance().startUpdatingMicroLocation(mBlueCatsSDKCallback);
+    BCMicroLocationManager.getInstance().startUpdatingMicroLocation(mMicroLocationManagerCallback);
 }
 
 @Override 
 protected void onPause() { 
     super.onPause();
 
-    BCMicroLocationManager.getInstance().stopUpdatingMicroLocation(mBlueCatsSDKCallback);
+    BCMicroLocationManager.getInstance().stopUpdatingMicroLocation(mMicroLocationManagerCallback);
 }
 ```
 
