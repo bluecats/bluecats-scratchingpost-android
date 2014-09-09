@@ -15,9 +15,9 @@ import com.bluecats.sdk.BCLocalNotification;
 import com.bluecats.sdk.BCLocalNotificationManager;
 import com.bluecats.sdk.BCMicroLocation;
 import com.bluecats.sdk.BCMicroLocationManager;
+import com.bluecats.sdk.BCMicroLocationManagerCallback;
 import com.bluecats.sdk.BCSite;
 import com.bluecats.sdk.BlueCatsSDK;
-import com.bluecats.sdk.IBlueCatsSDKCallback;
 
 import android.app.ActionBar;
 import android.app.ActionBar.Tab;
@@ -192,7 +192,7 @@ public class BeaconsActivity extends Activity implements TabListener {
 	    
 	    BCLocalNotificationManager.getInstance().scheduleLocalNotification(localNotification);
 
-		BCMicroLocationManager.getInstance().startUpdatingMicroLocation(mBlueCatsSDKCallback);
+		BCMicroLocationManager.getInstance().startUpdatingMicroLocation(mMicroLocationManagerCallback);
 	}
 
 	private void setTabContent(Tab tab) {
@@ -308,7 +308,7 @@ public class BeaconsActivity extends Activity implements TabListener {
 
 	}
 
-	private IBlueCatsSDKCallback mBlueCatsSDKCallback = new IBlueCatsSDKCallback() {
+	private BCMicroLocationManagerCallback mMicroLocationManagerCallback = new BCMicroLocationManagerCallback() {
 		@Override
 		public void onDidEnterSite(BCSite site) {
 
@@ -406,11 +406,6 @@ public class BeaconsActivity extends Activity implements TabListener {
 					}
 				}
 			});
-		}
-
-		@Override
-		public void onDidNotify(int id) {
-
 		}
 	};
 }

@@ -10,9 +10,8 @@ import com.bluecats.scratchingpost.util.BeaconsSnifferAdapter;
 import com.bluecats.sdk.BCBeacon;
 import com.bluecats.sdk.BCMicroLocation;
 import com.bluecats.sdk.BCMicroLocationManager;
+import com.bluecats.sdk.BCMicroLocationManagerCallback;
 import com.bluecats.sdk.BCSite;
-import com.bluecats.sdk.IBlueCatsSDKCallback;
-import com.bluecats.sdk.BCBeacon.BCProximity;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -38,7 +37,7 @@ public class BeaconSnifferActivity extends Activity {
 		mAdapterBeacons = new BeaconsSnifferAdapter(this, mBeacons);
 		mBeaconsList.setAdapter(mAdapterBeacons);
 
-		BCMicroLocationManager.getInstance().startUpdatingMicroLocation(mBlueCatsSDKCallback);
+		BCMicroLocationManager.getInstance().startUpdatingMicroLocation(mMicroLocationManagerCallback);
 	}
 
 	@Override
@@ -65,10 +64,10 @@ public class BeaconSnifferActivity extends Activity {
 		
 		Log.d(TAG, "onDestroy");
 
-		BCMicroLocationManager.getInstance().stopUpdatingMicroLocation(mBlueCatsSDKCallback);
+		BCMicroLocationManager.getInstance().stopUpdatingMicroLocation(mMicroLocationManagerCallback);
 	}
 
-	private IBlueCatsSDKCallback mBlueCatsSDKCallback = new IBlueCatsSDKCallback() {
+	private BCMicroLocationManagerCallback mMicroLocationManagerCallback = new BCMicroLocationManagerCallback() {
 		@Override
 		public void onDidEnterSite(BCSite site) {
 
@@ -134,11 +133,6 @@ public class BeaconSnifferActivity extends Activity {
 					}
 				}
 			});
-		}
-
-		@Override
-		public void onDidNotify(int id) {
-
 		}
 	};
 }

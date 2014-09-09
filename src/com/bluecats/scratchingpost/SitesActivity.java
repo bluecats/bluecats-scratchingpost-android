@@ -11,9 +11,9 @@ import com.bluecats.sdk.BCBeacon.BCProximity;
 import com.bluecats.sdk.BCCategory;
 import com.bluecats.sdk.BCMicroLocation;
 import com.bluecats.sdk.BCMicroLocationManager;
+import com.bluecats.sdk.BCMicroLocationManagerCallback;
 import com.bluecats.sdk.BCSite;
 import com.bluecats.sdk.BlueCatsSDK;
-import com.bluecats.sdk.IBlueCatsSDKCallback;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -92,7 +92,7 @@ public class SitesActivity extends Activity {
 		
 		BlueCatsSDK.startPurringWithAppToken(getApplicationContext(), "APP_TOKEN_HERE");
 
-		BCMicroLocationManager.getInstance().startUpdatingMicroLocation(mBlueCatsSDKCallback);
+		BCMicroLocationManager.getInstance().startUpdatingMicroLocation(mMicroLocationManagerCallback);
 	}	
 
 	@Override
@@ -140,7 +140,7 @@ public class SitesActivity extends Activity {
 	    }
 	};
 	
-	private IBlueCatsSDKCallback mBlueCatsSDKCallback = new IBlueCatsSDKCallback() {
+	private BCMicroLocationManagerCallback mMicroLocationManagerCallback = new BCMicroLocationManagerCallback() {
 		@Override
 		public void onDidEnterSite(final BCSite site) {
 			runOnUiThread(new Runnable() {
@@ -218,11 +218,6 @@ public class SitesActivity extends Activity {
 					Log.e(TAG, e.toString());
 				}
 			}
-		}
-
-		@Override
-		public void onDidNotify(int id) {
-
 		}
 	};
 }
