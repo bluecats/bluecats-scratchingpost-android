@@ -10,16 +10,16 @@ Create your app using min Android SDK version 4.3.
 Copy contents of the /libs folder into your project's /libs folder.
 
 ####Step 3.
-Hook the Google Pay Services SDK up to your project as a library project as the SDK depends on this:
+**Hook the Google Pay Services SDK up to your project as a library project as the SDK depends on this:**
 
 http://developer.android.com/google/play-services/setup.html
 
 And add the correct version to your manifest (see the AndroidManifest.xml step).
 
-####Step 3. 
+####Step 4. 
 Generate your app token from the Blue Cats Dashboard.
 
-####Step 4. 
+####Step 5. 
 Fire up the BlueCatsSDK in your applications main activity onCreate() method.
 
 ``` java
