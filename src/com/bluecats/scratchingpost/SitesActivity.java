@@ -8,6 +8,7 @@ import java.util.Map;
 import com.bluecats.scratchingpost.util.SitesAdapter;
 import com.bluecats.sdk.BCBeacon;
 import com.bluecats.sdk.BCBeacon.BCProximity;
+import com.bluecats.sdk.BCBeaconVisit;
 import com.bluecats.sdk.BCCategory;
 import com.bluecats.sdk.BCMicroLocation;
 import com.bluecats.sdk.BCMicroLocationManager;
@@ -99,14 +100,14 @@ public class SitesActivity extends Activity {
 	protected void onResume() {
 		super.onResume();
 
-		BCMicroLocationManager.getInstance().didEnterForeground();
+		BlueCatsSDK.didEnterForeground();
 	}
 
 	@Override 
 	protected void onPause() { 
 		super.onPause();
 
-		BCMicroLocationManager.getInstance().didEnterBackground();
+		BlueCatsSDK.didEnterBackground();
 	}
 	
 	private DialogInterface.OnClickListener mBluetoothDialogClickListener = new DialogInterface.OnClickListener() {
@@ -218,6 +219,16 @@ public class SitesActivity extends Activity {
 					Log.e(TAG, e.toString());
 				}
 			}
+		}
+
+		@Override
+		public void onDidBeginVisitForBeacon(BCBeaconVisit beaconVisit, BCBeacon beacon) {
+			
+		}
+
+		@Override
+		public void onDidEndVisitForBeacon(BCBeaconVisit beaconVisit, BCBeacon beacon) {
+			
 		}
 	};
 }

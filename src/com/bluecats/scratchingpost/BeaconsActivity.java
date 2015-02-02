@@ -10,6 +10,7 @@ import java.util.Map.Entry;
 import com.bluecats.scratchingpost.util.BeaconsAdapter;
 import com.bluecats.sdk.BCBeacon.BCProximity;
 import com.bluecats.sdk.BCBeacon;
+import com.bluecats.sdk.BCBeaconVisit;
 import com.bluecats.sdk.BCCategory;
 import com.bluecats.sdk.BCLocalNotification;
 import com.bluecats.sdk.BCLocalNotificationManager;
@@ -260,7 +261,7 @@ public class BeaconsActivity extends Activity implements TabListener {
 
 		Log.d(TAG, "onResume");
 
-		BCMicroLocationManager.getInstance().didEnterForeground();
+		BlueCatsSDK.didEnterForeground();
 	}
 
 	@Override 
@@ -269,7 +270,7 @@ public class BeaconsActivity extends Activity implements TabListener {
 
 		Log.d(TAG, "onPause");
 
-		BCMicroLocationManager.getInstance().didEnterBackground();
+		BlueCatsSDK.didEnterBackground();
 	}
 
 	@Override 
@@ -406,6 +407,16 @@ public class BeaconsActivity extends Activity implements TabListener {
 					}
 				}
 			});
+		}
+
+		@Override
+		public void onDidBeginVisitForBeacon(BCBeaconVisit beaconVisit, BCBeacon beacon) {
+			
+		}
+
+		@Override
+		public void onDidEndVisitForBeacon(BCBeaconVisit beaconVisit, BCBeacon beacon) {
+			
 		}
 	};
 }

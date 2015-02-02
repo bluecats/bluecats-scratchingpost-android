@@ -8,10 +8,12 @@ import java.util.Map.Entry;
 
 import com.bluecats.scratchingpost.util.BeaconsSnifferAdapter;
 import com.bluecats.sdk.BCBeacon;
+import com.bluecats.sdk.BCBeaconVisit;
 import com.bluecats.sdk.BCMicroLocation;
 import com.bluecats.sdk.BCMicroLocationManager;
 import com.bluecats.sdk.BCMicroLocationManagerCallback;
 import com.bluecats.sdk.BCSite;
+import com.bluecats.sdk.BlueCatsSDK;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -46,7 +48,7 @@ public class BeaconSnifferActivity extends Activity {
 		
 		Log.d(TAG, "onResume");
 
-		BCMicroLocationManager.getInstance().didEnterForeground();
+		BlueCatsSDK.didEnterForeground();
 	}
 
 	@Override 
@@ -55,7 +57,7 @@ public class BeaconSnifferActivity extends Activity {
 		
 		Log.d(TAG, "onPause");
 
-		BCMicroLocationManager.getInstance().didEnterBackground();
+		BlueCatsSDK.didEnterBackground();
 	}
 
 	@Override 
@@ -133,6 +135,16 @@ public class BeaconSnifferActivity extends Activity {
 					}
 				}
 			});
+		}
+
+		@Override
+		public void onDidBeginVisitForBeacon(BCBeaconVisit beaconVisit, BCBeacon beacon) {
+			
+		}
+
+		@Override
+		public void onDidEndVisitForBeacon(BCBeaconVisit beaconVisit, BCBeacon beacon) {
+			
 		}
 	};
 }
