@@ -313,12 +313,12 @@ Update your AndroidManifest.xml file to include the following permissions:
 <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 ```
 
-You will also need to add the BlueCatsService and the version of Google Play Services that you have hooked up to your app (Currently 5.0.77-000)
+You will also need to add the BlueCatsService and the version of Google Play Services that you have hooked up to your app
 
 ``` xml
 <service android:name="com.bluecats.sdk.BlueCatsSDKService" />
 
 <meta-data
     android:name="com.google.android.gms.version"
-    android:value="5077000" />
+    android:value="@integer/google_play_services_version" />
 ```
