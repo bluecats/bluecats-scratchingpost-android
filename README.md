@@ -10,7 +10,7 @@ Create your app using min Android SDK version 4.3.
 Copy contents of the /libs folder into your project's /libs folder.
 
 ####Step 3.
-**Hook the Google Pay Services SDK up to your project as a library project as the SDK depends on this:**
+**Hook the Google Play Services SDK up to your project as a library project as the SDK depends on this:**
 
 http://developer.android.com/google/play-services/setup.html
 
