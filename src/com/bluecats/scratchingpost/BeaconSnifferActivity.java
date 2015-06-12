@@ -136,15 +136,5 @@ public class BeaconSnifferActivity extends Activity {
 				}
 			});
 		}
-
-		@Override
-		public void onDidBeginVisitForBeacon(BCBeaconVisit beaconVisit, BCBeacon beacon) {
-			
-		}
-
-		@Override
-		public void onDidEndVisitForBeacon(BCBeaconVisit beaconVisit, BCBeacon beacon) {
-			
-		}
 	};
 }

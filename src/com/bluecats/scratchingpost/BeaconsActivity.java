@@ -408,15 +408,5 @@ public class BeaconsActivity extends Activity implements TabListener {
 				}
 			});
 		}
-
-		@Override
-		public void onDidBeginVisitForBeacon(BCBeaconVisit beaconVisit, BCBeacon beacon) {
-			
-		}
-
-		@Override
-		public void onDidEndVisitForBeacon(BCBeaconVisit beaconVisit, BCBeacon beacon) {
-			
-		}
 	};
 }
