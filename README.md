@@ -65,7 +65,7 @@ Notify the SDK when you enter the background, or come back in to the foreground.
 @Override
 protected void onResume() {
     super.onResume();
-
+    BlueCatsSDK.didEnterForeground();
     BCMicroLocationManager.getInstance().didEnterForeground();
 }
 ```
@@ -74,7 +74,7 @@ protected void onResume() {
 @Override
 protected void onPause() {
     super.onPause();
-
+    BlueCatsSDK.didEnterBackground();
     BCMicroLocationManager.getInstance().didEnterBackground();
 }
 ```
@@ -129,14 +129,14 @@ You can call stopUpdatingMicroLocation if you want to explicity stop receiving u
 @Override
 protected void onResume() {
     super.onResume();
-
+    BlueCatsSDK.didEnterForeground();
     BCMicroLocationManager.getInstance().startUpdatingMicroLocation(mMicroLocationManagerCallback);
 }
 
 @Override 
 protected void onPause() { 
     super.onPause();
-
+    BlueCatsSDK.didEnterBackground();
     BCMicroLocationManager.getInstance().stopUpdatingMicroLocation(mMicroLocationManagerCallback);
 }
 ```
@@ -147,14 +147,14 @@ It is advisable to call didEnterForeground and didEnterBackground as your app co
 @Override
 protected void onResume() {
     super.onResume();
-
+    BlueCatsSDK.didEnterForeground();
     BCMicroLocationManager.getInstance().didEnterForeground();
 }
 
 @Override 
 protected void onPause() { 
     super.onPause();
-
+    BlueCatsSDK.didEnterBackground();
     BCMicroLocationManager.getInstance().didEnterBackground();
 }
 ```
@@ -165,7 +165,7 @@ You can also make an explicit call to requestStateForSites to trigger any onDidE
 @Override
 protected void onResume() {
     super.onResume();
-
+    BlueCatsSDK.didEnterForeground();
     BCMicroLocationManager.getInstance().requestStateForSites();
 }
 ```
