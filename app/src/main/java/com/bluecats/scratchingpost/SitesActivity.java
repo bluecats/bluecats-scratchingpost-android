@@ -90,7 +90,7 @@ public class SitesActivity extends Activity
 		sitesNearby.setAdapter( mAdapterSitesNearby );
 		sitesNearby.setLayoutManager( new LinearLayoutManager( this ) );
 
-		BlueCatsSDK.startPurringWithAppToken( this, APP_TOKEN );
+		BlueCatsSDK.startPurringWithAppToken( getApplicationContext(), APP_TOKEN );
 
 		BCMicroLocationManager.getInstance().startUpdatingMicroLocation( mMicroLocationManagerCallback );
 	}
