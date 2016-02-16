@@ -31,7 +31,7 @@ import java.util.Map;
 public class SitesActivity extends Activity
 {
 	private static final String TAG = "SitesActivity";
-	private static final String APP_TOKEN = "d5e2dd30-0575-4b19-9622-59145a22d741";
+	private static final String APP_TOKEN = "YOUR_APP_TOKEN_HERE";
 
 	private BluetoothAdapter mBtAdapter;
 	private LocationManager mLocationManager;
