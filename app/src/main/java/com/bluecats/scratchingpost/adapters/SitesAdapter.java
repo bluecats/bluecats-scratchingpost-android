@@ -66,14 +66,14 @@ public class SitesAdapter extends RecyclerView.Adapter<SitesAdapter.ViewHolder>
 			String beaconLabel;
 			if( beaconCount == 1 )
 			{
-				beaconLabel = " beacon";
+				beaconLabel = "beacon";
 			}
 			else
 			{
-				beaconLabel = " beacons";
+				beaconLabel = "beacons";
 			}
 
-			mTxtBeaconCount.setText( String.format( "%d%s", beaconCount, beaconLabel ) );
+			mTxtBeaconCount.setText( beaconCount + " " + beaconLabel );
 
 			final int colourPos = position % mRowColours.length;
 			mView.setBackgroundColor( mRowColours[colourPos] );

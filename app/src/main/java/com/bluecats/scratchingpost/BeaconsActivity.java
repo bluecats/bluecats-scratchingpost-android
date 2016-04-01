@@ -383,13 +383,13 @@ public class BeaconsActivity extends Activity implements TabListener
 		@Override
 		public void didBeginVisitForBeaconsWithSerialNumbers( final List<String> list )
 		{
-
+			Log.d( TAG, "didBeginVisitForBeaconsWithSerialNumbers: called" );
 		}
 
 		@Override
 		public void didEndVisitForBeaconsWithSerialNumbers( final List<String> list )
 		{
-
+			Log.d( TAG, "didEndVisitForBeaconsWithSerialNumbers: called" );
 		}
 	};
 }

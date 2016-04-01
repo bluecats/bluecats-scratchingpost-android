@@ -31,7 +31,6 @@ import java.util.Map;
 public class SitesActivity extends Activity
 {
 	private static final String TAG = "SitesActivity";
-	private static final String APP_TOKEN = "YOUR_APP_TOKEN_HERE";
 
 	private BluetoothAdapter mBtAdapter;
 	private LocationManager mLocationManager;
@@ -90,7 +89,7 @@ public class SitesActivity extends Activity
 		sitesNearby.setAdapter( mAdapterSitesNearby );
 		sitesNearby.setLayoutManager( new LinearLayoutManager( this ) );
 
-		BlueCatsSDK.startPurringWithAppToken( getApplicationContext(), APP_TOKEN );
+		BlueCatsSDK.startPurringWithAppToken( getApplicationContext(), Application.BLUECATS_APP_TOKEN );
 
 		BCMicroLocationManager.getInstance().startUpdatingMicroLocation( mMicroLocationManagerCallback );
 	}
@@ -207,7 +206,7 @@ public class SitesActivity extends Activity
 					{
 						if( mSitesInside.contains( site ) )
 						{
-							mSitesInside.get( mSitesInside.indexOf( site ) ).setBeaconCount( site.getBeaconCount() );
+							//mSitesInside.get( mSitesInside.indexOf( site ) ).setBeaconCount( site.getBeaconCount() );
 						}
 						else if( !mSitesNearby.contains( site ) )
 						{

@@ -63,8 +63,8 @@ public class BeaconsAdapter extends RecyclerView.Adapter<BeaconsAdapter.ViewHold
 
 		public void bindView( final BCBeacon beacon, final int position )
 		{
-			mTxtName.setText( beacon.getIBeaconKey().substring( 32 ) );
-			mTxtRSSI.setText( String.format( "%d rssi", beacon.getRSSI() ) );
+			mTxtName.setText( beacon.getProximityUUIDString() );
+			mTxtRSSI.setText( beacon.getRSSI() + " rssi" );
 
 			String categories = "";
 			for( int i = 0; i < beacon.getCategories().length; i++ )
