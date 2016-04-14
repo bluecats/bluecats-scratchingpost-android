@@ -1,0 +1,35 @@
+<manifest
+	package="com.bluecats.scratchingpost"
+	xmlns:android="http://schemas.android.com/apk/res/android">
+
+	<!-- Permissions -->
+	<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+
+	<application
+		android:allowBackup="true"
+		android:icon="@mipmap/ic_launcher"
+		android:label="@string/app_name"
+		android:supportsRtl="true"
+		android:theme="@style/AppTheme">
+
+		<!-- Activities -->
+		<activity android:name="com.bluecats.scratchingpost.SitesActivity">
+			<intent-filter>
+				<action android:name="android.intent.action.MAIN"/>
+
+				<category android:name="android.intent.category.LAUNCHER"/>
+			</intent-filter>
+		</activity>
+		<activity android:name="com.bluecats.scratchingpost.BeaconsActivity"/>
+		<activity android:name="com.bluecats.scratchingpost.BeaconSnifferActivity"/>
+
+		<!-- Services -->
+		<service android:name="com.bluecats.sdk.BlueCatsSDKService"/>
+		<receiver android:name="com.bluecats.sdk.BlueCatsSDKServiceReceiver">
+			<intent-filter>
+				<action android:name="android.intent.action.BOOT_COMPLETED"/>
+			</intent-filter>
+		</receiver>
+	</application>
+
+</manifest>
