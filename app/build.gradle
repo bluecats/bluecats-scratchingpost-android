@@ -1,0 +1,23 @@
+apply plugin: 'com.android.application'
+
+android {
+	compileSdkVersion 23
+	buildToolsVersion "23.0.3"
+
+	defaultConfig {
+		applicationId "com.bluecats.scratchingpost"
+		minSdkVersion 14
+		targetSdkVersion 23
+	}
+	buildTypes {
+		release {
+			minifyEnabled true
+			proguardFiles getDefaultProguardFile( 'proguard-android.txt' ), 'proguard-rules.pro'
+		}
+	}
+}
+
+dependencies {
+	compile 'com.bluecats:bluecats-android-sdk:1.13.8'
+	compile 'com.android.support:recyclerview-v7:23.3.0'
+}

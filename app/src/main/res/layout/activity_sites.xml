@@ -1,0 +1,62 @@
+<ScrollView
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:background="@color/colorPrimary">
+
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="vertical">
+
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:orientation="vertical">
+
+			<TextView
+				android:id="@+id/txv_sites_inside_header"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:background="@drawable/heading_underline"
+				android:padding="10dp"
+				android:text="@string/title_sites_inside"
+				android:textColor="@android:color/white"
+				android:textSize="20sp"/>
+
+			<android.support.v7.widget.RecyclerView
+				android:id="@+id/list_sites_inside"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				tools:listitem="@layout/list_item_site"/>
+
+		</LinearLayout>
+
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="20dp"
+			android:orientation="vertical">
+
+			<TextView
+				android:id="@+id/txv_sites_nearby_header"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:background="@drawable/heading_underline"
+				android:padding="10dp"
+				android:text="@string/title_sites_nearby"
+				android:textColor="@android:color/white"
+				android:textSize="20sp"/>
+
+			<android.support.v7.widget.RecyclerView
+				android:id="@+id/list_sites_nearby"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				tools:listitem="@layout/list_item_site"/>
+
+		</LinearLayout>
+
+	</LinearLayout>
+
+</ScrollView>
