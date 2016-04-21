@@ -1,0 +1,39 @@
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:orientation="vertical"
+	android:padding="10dp">
+
+	<RelativeLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content">
+
+		<TextView
+			android:id="@+id/txv_name"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignParentLeft="true"
+			android:layout_toLeftOf="@+id/txv_rssi"
+			android:ellipsize="end"
+			android:textColor="@android:color/white"
+			android:textSize="20sp"/>
+
+		<TextView
+			android:id="@+id/txv_rssi"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignParentRight="true"
+			android:textColor="@android:color/white"
+			android:textSize="20sp"/>
+
+	</RelativeLayout>
+
+	<TextView
+		android:id="@+id/txv_categories"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:textColor="@android:color/white"
+		android:textSize="15sp"/>
+
+</LinearLayout>
