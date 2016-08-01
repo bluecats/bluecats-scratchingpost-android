@@ -1,32 +1,35 @@
-<FrameLayout
+<layout
 	xmlns:android="http://schemas.android.com/apk/res/android"
-	xmlns:tools="http://schemas.android.com/tools"
-	android:layout_width="match_parent"
-	android:layout_height="match_parent"
-	android:background="@color/colorPrimary">
+	xmlns:app="http://schemas.android.com/apk/res-auto">
 
-	<android.support.v7.widget.RecyclerView
-		android:id="@+id/list_beacons_immediate"
+	<LinearLayout
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		tools:listitem="@layout/list_item_beacon"/>
+		android:orientation="vertical">
 
-	<android.support.v7.widget.RecyclerView
-		android:id="@+id/list_beacons_near"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		tools:listitem="@layout/list_item_beacon"/>
+		<android.support.design.widget.AppBarLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content">
 
-	<android.support.v7.widget.RecyclerView
-		android:id="@+id/list_beacons_far"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		tools:listitem="@layout/list_item_beacon"/>
+			<android.support.v7.widget.Toolbar
+				android:id="@+id/toolbar"
+				android:layout_width="match_parent"
+				android:layout_height="?attr/actionBarSize"/>
 
-	<android.support.v7.widget.RecyclerView
-		android:id="@+id/list_beacons_unknown"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		tools:listitem="@layout/list_item_beacon"/>
+			<android.support.design.widget.TabLayout
+				android:id="@+id/tab_layout"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_gravity="center_horizontal"
+				app:tabMode="scrollable"/>
 
-</FrameLayout>
+		</android.support.design.widget.AppBarLayout>
+
+		<android.support.v4.view.ViewPager
+			android:id="@+id/view_pager"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"/>
+
+	</LinearLayout>
+
+</layout>

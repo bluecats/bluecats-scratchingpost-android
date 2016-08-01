@@ -1,0 +1,57 @@
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+	<data>
+
+		<variable
+			name="beacon"
+			type="com.bluecats.sdk.BCBeacon"/>
+	</data>
+
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="vertical"
+		android:padding="10dp">
+
+		<RelativeLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content">
+
+			<TextView
+				android:id="@+id/txt_serial_number"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_alignParentLeft="true"
+				android:layout_toLeftOf="@+id/txt_rssi"
+				android:text="@{beacon.serialNumber}"
+				android:ellipsize="end"
+				android:textSize="20sp"/>
+
+			<TextView
+				android:id="@+id/txt_rssi"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_alignParentRight="true"
+				android:text='@{beacon.RSSI + " rssi"}'
+				android:textSize="20sp"/>
+
+		</RelativeLayout>
+
+		<TextView
+			android:id="@+id/txt_categories"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:ellipsize="end"
+			android:textSize="15sp"/>
+
+		<TextView
+			android:id="@+id/txv_proximity"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:ellipsize="end"
+			android:text="@{beacon.proximity.getDisplayName(false)}"
+			android:textSize="15sp"/>
+
+	</LinearLayout>
+
+</layout>

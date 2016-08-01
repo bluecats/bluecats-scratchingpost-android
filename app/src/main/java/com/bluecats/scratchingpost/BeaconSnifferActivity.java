@@ -1,44 +1,46 @@
 package com.bluecats.scratchingpost;
 
-import android.app.Activity;
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.Window;
+import android.view.MenuItem;
 
 import com.bluecats.scratchingpost.adapters.BeaconSnifferAdapter;
+import com.bluecats.scratchingpost.databinding.ActivityBeaconSnifferBinding;
 import com.bluecats.sdk.BCBeacon;
-import com.bluecats.sdk.BCMicroLocation;
-import com.bluecats.sdk.BCMicroLocationManager;
-import com.bluecats.sdk.BCMicroLocationManagerCallback;
-import com.bluecats.sdk.BCSite;
+import com.bluecats.sdk.BCBeaconManager;
+import com.bluecats.sdk.BCBeaconManagerCallback;
 import com.bluecats.sdk.BlueCatsSDK;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
-public class BeaconSnifferActivity extends Activity
+public class BeaconSnifferActivity extends AppCompatActivity
 {
 	private static final String TAG = "BeaconSnifferActivity";
 
 	private final List<BCBeacon> mBeacons = Collections.synchronizedList( new ArrayList<BCBeacon>() );
 	private final BeaconSnifferAdapter mBeaconsAdapter = new BeaconSnifferAdapter( mBeacons );
+	private final BCBeaconManager mBeaconManager = new BCBeaconManager();
+
+	private ActivityBeaconSnifferBinding mBinding;
 
 	@Override
 	protected void onCreate( Bundle savedInstanceState )
 	{
 		super.onCreate( savedInstanceState );
-		getWindow().requestFeature( Window.FEATURE_ACTION_BAR );
-		setContentView( R.layout.activity_beacon_sniffer );
+		mBinding = DataBindingUtil.setContentView( this, R.layout.activity_beacon_sniffer );
 
-		final RecyclerView mBeaconsList = (RecyclerView) findViewById( R.id.list_beacons_sniffer );
-		mBeaconsList.setAdapter( mBeaconsAdapter );
-		mBeaconsList.setLayoutManager( new LinearLayoutManager( this ) );
+		setSupportActionBar( mBinding.toolbar );
+		final ActionBar actionBar = getSupportActionBar();
+		actionBar.setDisplayHomeAsUpEnabled( true );
 
-		BCMicroLocationManager.getInstance().startUpdatingMicroLocation( mMicroLocationManagerCallback );
+		mBinding.rcyBeaconsSniffer.setAdapter( mBeaconsAdapter );
+		mBinding.rcyBeaconsSniffer.setLayoutManager( new LinearLayoutManager( this ) );
 	}
 
 	@Override
@@ -49,6 +51,7 @@ public class BeaconSnifferActivity extends Activity
 		Log.d( TAG, "onResume" );
 
 		BlueCatsSDK.didEnterForeground();
+		mBeaconManager.registerCallback( mBeaconManagerCallback );
 	}
 
 	@Override
@@ -59,60 +62,73 @@ public class BeaconSnifferActivity extends Activity
 		Log.d( TAG, "onPause" );
 
 		BlueCatsSDK.didEnterBackground();
+		mBeaconManager.unregisterCallback( mBeaconManagerCallback );
 	}
 
 	@Override
-	protected void onDestroy()
+	public boolean onOptionsItemSelected( final MenuItem item )
 	{
-		super.onDestroy();
+		switch( item.getItemId() )
+		{
+			case android.R.id.home:
+				onBackPressed();
+				break;
+		}
 
-		Log.d( TAG, "onDestroy" );
-
-		BCMicroLocationManager.getInstance().stopUpdatingMicroLocation( mMicroLocationManagerCallback );
+		return true;
 	}
 
-	private BCMicroLocationManagerCallback mMicroLocationManagerCallback = new BCMicroLocationManagerCallback()
+	private final BCBeaconManagerCallback mBeaconManagerCallback = new BCBeaconManagerCallback()
 	{
 		@Override
-		public void onDidEnterSite( final BCSite site )
+		public void didEnterBeacons( final List<BCBeacon> beacons )
 		{
-
-		}
-
-		@Override
-		public void onDidExitSite( final BCSite site )
-		{
-
-		}
-
-		@Override
-		public void onDidUpdateNearbySites( final List<BCSite> sites )
-		{
-
-		}
-
-		@Override
-		public void onDidRangeBeaconsForSiteID( final BCSite site, final List<BCBeacon> beacons )
-		{
-			// to enable this method call BCMicroLocationManager.getInstance().startRangingBeaconsInSite(site)
-			// from the onDidEnterSite callback.
+			Log.d( TAG, "didEnterBeacons: " + beacons.size() + " found" );
 
 			for( final BCBeacon beacon : beacons )
 			{
-				if( mBeacons.contains( beacon ) )
+				if( !mBeacons.contains( beacon ) )
 				{
-					//This beacon is already in the list; only update the RSSI and Proximity.
-					final BCBeacon beaconToUpdate = mBeacons.get( mBeacons.indexOf( beacon ) );
-					beaconToUpdate.setRSSI( beacon.getRSSI() );
-					beaconToUpdate.setProximity( beacon.getProximity() );
+					mBeacons.add( beacon );
+
+					runOnUiThread( new Runnable()
+					{
+						@Override
+						public void run()
+						{
+							mBeaconsAdapter.notifyItemInserted( mBeacons.size() - 1 );
+						}
+					} );
+				}
+			}
+		}
+
+		@Override
+		public void didRangeBeacons( final List<BCBeacon> beacons )
+		{
+			//A hack to add any beacons that have entered before this callback was created
+			final List<BCBeacon> unfoundBeacons = new ArrayList<>();
+
+			for( final BCBeacon beacon : beacons )
+			{
+				final int index = mBeacons.indexOf( beacon );
+				if( index > -1 )
+				{
+					mBeacons.set( index, beacon );
 				}
 				else
 				{
-					//Add this beacon to the list.
-					mBeacons.add( beacon );
+					//Beacon doesn't exist, add it
+					unfoundBeacons.add( beacon );
 				}
 			}
 
+			if( unfoundBeacons.size() > 0 )
+			{
+				didEnterBeacons( unfoundBeacons );
+			}
+
+			//Beacons are updated on every range, i.e. new RSSI, so update data set every time
 			runOnUiThread( new Runnable()
 			{
 				@Override
@@ -124,52 +140,25 @@ public class BeaconSnifferActivity extends Activity
 		}
 
 		@Override
-		public void onDidUpdateMicroLocation( final List<BCMicroLocation> microLocations )
+		public void didExitBeacons( final List<BCBeacon> beacons )
 		{
-			if( microLocations.size() > 0 )
+			for( final BCBeacon beacon : beacons )
 			{
-				final BCMicroLocation microLocation = microLocations.get( microLocations.size() - 1 );
-
-				for( final Map.Entry<String, List<BCBeacon>> entry : microLocation.getBeaconsForSiteID().entrySet() )
+				if( mBeacons.contains( beacon ) )
 				{
-					for( final BCBeacon beacon : entry.getValue() )
+					final int index = mBeacons.indexOf( beacon );
+					mBeacons.remove( index );
+
+					runOnUiThread( new Runnable()
 					{
-						if( mBeacons.contains( beacon ) )
+						@Override
+						public void run()
 						{
-							//This beacon is already in the list; only update the RSSI and Proximity.
-							final BCBeacon beaconToUpdate = mBeacons.get( mBeacons.indexOf( beacon ) );
-							beaconToUpdate.setRSSI( beacon.getRSSI() );
-							beaconToUpdate.setProximity( beacon.getProximity() );
+							mBeaconsAdapter.notifyItemRemoved( index );
 						}
-						else
-						{
-							//Add this beacon to the list.
-							mBeacons.add( beacon );
-						}
-					}
+					} );
 				}
-
-				runOnUiThread( new Runnable()
-				{
-					@Override
-					public void run()
-					{
-						mBeaconsAdapter.notifyDataSetChanged();
-					}
-				} );
 			}
-		}
-
-		@Override
-		public void didBeginVisitForBeaconsWithSerialNumbers( final List<String> list )
-		{
-
-		}
-
-		@Override
-		public void didEndVisitForBeaconsWithSerialNumbers( final List<String> list )
-		{
-
 		}
 	};
 }

@@ -1,62 +1,65 @@
-<ScrollView
+<layout
 	xmlns:android="http://schemas.android.com/apk/res/android"
-	xmlns:tools="http://schemas.android.com/tools"
-	android:layout_width="match_parent"
-	android:layout_height="match_parent"
-	android:background="@color/colorPrimary">
+	xmlns:tools="http://schemas.android.com/tools">
 
 	<LinearLayout
 		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
+		android:layout_height="match_parent"
 		android:orientation="vertical">
 
-		<LinearLayout
+		<android.support.design.widget.AppBarLayout
 			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:orientation="vertical">
+			android:layout_height="wrap_content">
 
-			<TextView
-				android:id="@+id/txv_sites_inside_header"
+			<android.support.v7.widget.Toolbar
+				android:id="@+id/toolbar"
 				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:background="@drawable/heading_underline"
-				android:padding="10dp"
-				android:text="@string/title_sites_inside"
-				android:textColor="@android:color/white"
-				android:textSize="20sp"/>
+				android:layout_height="?attr/actionBarSize"/>
 
-			<android.support.v7.widget.RecyclerView
-				android:id="@+id/list_sites_inside"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				tools:listitem="@layout/list_item_site"/>
+		</android.support.design.widget.AppBarLayout>
 
-		</LinearLayout>
-
-		<LinearLayout
+		<ScrollView
 			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:layout_marginTop="20dp"
-			android:orientation="vertical">
+			android:layout_height="match_parent">
 
-			<TextView
-				android:id="@+id/txv_sites_nearby_header"
+			<LinearLayout
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				android:background="@drawable/heading_underline"
-				android:padding="10dp"
-				android:text="@string/title_sites_nearby"
-				android:textColor="@android:color/white"
-				android:textSize="20sp"/>
+				android:orientation="vertical">
 
-			<android.support.v7.widget.RecyclerView
-				android:id="@+id/list_sites_nearby"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				tools:listitem="@layout/list_item_site"/>
+				<TextView
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:background="@drawable/heading_underline"
+					android:padding="10dp"
+					android:text="@string/SitesActivity.sites_inside"
+					android:textSize="20sp"/>
 
-		</LinearLayout>
+				<android.support.v7.widget.RecyclerView
+					android:id="@+id/rcy_sites_inside"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					tools:listitem="@layout/item_site"/>
+
+				<TextView
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_marginTop="20dp"
+					android:background="@drawable/heading_underline"
+					android:padding="10dp"
+					android:text="@string/SitesActivity.sites_nearby"
+					android:textSize="20sp"/>
+
+				<android.support.v7.widget.RecyclerView
+					android:id="@+id/rcy_sites_nearby"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					tools:listitem="@layout/item_site"/>
+
+			</LinearLayout>
+
+		</ScrollView>
 
 	</LinearLayout>
 
-</ScrollView>
+</layout>

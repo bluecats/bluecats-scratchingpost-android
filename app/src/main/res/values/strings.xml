@@ -1,8 +1,12 @@
 <resources>
-	<string name="app_name">ScratchingPost</string>
+	<string name="app_name">Scratching Post</string>
 
-	<string name="title_activity_sites">Sites</string>
-	<string name="title_sites_inside">Sites Inside</string>
-	<string name="title_sites_nearby">Sites Nearby</string>
-	<string name="title_activity_beacons">Beacons</string>
+	<string name="SitesActivity.sites_inside">Sites Inside</string>
+	<string name="SitesActivity.sites_nearby">Sites Nearby/Exited</string>
+
+	<string name="BeaconSnifferActivity.title">Beacon Sniffer</string>
+
+	<string name="Utilities.location_permission_rationale">Enable location</string>
+
+	<string name="btn_view">View</string>
 </resources>

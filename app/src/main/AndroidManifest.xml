@@ -1,35 +1,31 @@
 <manifest
-	package="com.bluecats.scratchingpost"
-	xmlns:android="http://schemas.android.com/apk/res/android">
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	package="com.bluecats.scratchingpost">
 
 	<!-- Permissions -->
-	<uses-permission android:name="android.permission.BLUETOOTH"/>
-	<uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
-	<uses-permission android:name="android.permission.INTERNET" />
-	<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-	<uses-permission android:name="android.permission.WAKE_LOCK" />
 	<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
 
 	<application
-		android:allowBackup="true"
+		android:allowBackup="false"
 		android:icon="@mipmap/ic_launcher"
 		android:label="@string/app_name"
-		android:supportsRtl="true"
 		android:theme="@style/AppTheme">
 
 		<!-- Activities -->
-		<activity android:name="com.bluecats.scratchingpost.SitesActivity">
+		<activity android:name=".SitesActivity">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN"/>
 				<category android:name="android.intent.category.LAUNCHER"/>
 			</intent-filter>
 		</activity>
-		<activity android:name="com.bluecats.scratchingpost.BeaconsActivity"/>
-		<activity android:name="com.bluecats.scratchingpost.BeaconSnifferActivity"/>
+
+		<activity android:name=".BeaconsActivity"/>
+
+		<activity
+			android:name=".BeaconSnifferActivity"
+			android:label="@string/BeaconSnifferActivity.title"/>
 
 		<!-- Services -->
-		<service android:name="com.bluecats.sdk.BlueCatsSDKService"/>
 		<receiver android:name="com.bluecats.sdk.BlueCatsSDKServiceReceiver">
 			<intent-filter>
 				<action android:name="android.intent.action.BOOT_COMPLETED"/>

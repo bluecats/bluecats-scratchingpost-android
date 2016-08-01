@@ -1,14 +1,29 @@
-<FrameLayout
+<layout
 	xmlns:android="http://schemas.android.com/apk/res/android"
-	xmlns:tools="http://schemas.android.com/tools"
-	android:layout_width="match_parent"
-	android:layout_height="match_parent"
-	android:background="@color/colorPrimary">
+	xmlns:tools="http://schemas.android.com/tools">
 
-	<android.support.v7.widget.RecyclerView
-		android:id="@+id/list_beacons_sniffer"
+	<LinearLayout
 		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		tools:listitem="@layout/list_item_beacon_sniffer"/>
+		android:layout_height="match_parent"
+		android:orientation="vertical">
 
-</FrameLayout>
+		<android.support.design.widget.AppBarLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content">
+
+			<android.support.v7.widget.Toolbar
+				android:id="@+id/toolbar"
+				android:layout_width="match_parent"
+				android:layout_height="?attr/actionBarSize"/>
+
+		</android.support.design.widget.AppBarLayout>
+
+		<android.support.v7.widget.RecyclerView
+			android:id="@+id/rcy_beacons_sniffer"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			tools:listitem="@layout/item_beacon_sniffer"/>
+
+	</LinearLayout>
+
+</layout>
