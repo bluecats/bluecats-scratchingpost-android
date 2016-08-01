@@ -29,10 +29,9 @@ A BCBeaconManager object is used to monitor beacon events that occur nearby. Thi
 
 #### BCMicroLocation (DEPRECATED)
 
-A BCMicroLocation object represents the sites and beacons in proximity to the user. When your app needs some context it can query a micro-location for a site's beacons and categories by proximity. Its all the beacon goodness wrapped up into a tiny object. And integrating micro-locations with your app is simple. Simply observe the BCMicroLocationManager did update micro location event.
+A BCMicroLocation object represents the sites and beacons in proximity to the user. When your app needs some context it can query a micro-location for a site's beacons and categories by proximity. It's all the beacon goodness wrapped up into a tiny object. Integrating micro-locations with your app is simple as well, simply observe the BCMicroLocationManagerCallback.onDidUpdateMicroLocation() event to receive the relevant micro-locations.
 
 ## Examples
-
 ### Start Purring
 
 You receive beacon events from the BCBeaconManager object, passing in your callback and your activity.
@@ -59,9 +58,7 @@ protected void onResume()
 
     BlueCatsSDK.didEnterForeground();
 }
-```
 
-``` java
 @Override
 protected void onPause()
 {
