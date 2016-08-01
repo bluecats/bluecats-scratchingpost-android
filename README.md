@@ -169,16 +169,20 @@ BCLocalNotification localNotification = new BCLocalNotification( NOTIFICATION_ID
 final BCSite site = new BCSite();
 site.setSiteID( "SITE_ID_HERE" );
 site.setName( "SITE_NAME_HERE" );
+
 localNotification.setFireInSite( site );
 
 // optional time to trigger the event after, eg 10 seconds from now        
-localNotification.setFireAfter( new Date( new Date().getTime() + ( 10 * 1000 ) ) );
+localNotification.setFireAfter( new Date( System.currentTimeMillis() + ( 10 * 1000 ) ) );
 
-// add a category or several categories to trigger the notification        
-final List<BCCategory> categories = new ArrayList<BCCategory>();
+// add a category or several categories to trigger the notification
 final BCCategory category = new BCCategory();
 category.setName( "CATEGORY_NAME" );
-categories.add( category );
+
+final List<BCCategory> categories = Arrays.asList(
+	category
+);
+
 localNotification.setFireInCategories( categories );
 
 // can add an optional proximity to trigger event        
@@ -190,11 +194,11 @@ localNotification.setAlertContentText( "ALERT_CONTENT" );
 
 // launch icon and ringtone are optional. will just default ringtone and app icon for defaults        
 localNotification.setAlertSmallIcon( R.mipmap.ic_launcher );
-localNotification.setAlertSound( RingtoneManager.getActualDefaultRingtoneUri( BeaconsActivity.this, RingtoneManager.TYPE_NOTIFICATION ) );
+localNotification.setAlertSound( RingtoneManager.getActualDefaultRingtoneUri( this, RingtoneManager.TYPE_NOTIFICATION ) );
 
 // this controls where the notification takes you.
 // can also contain a bundle or any extra info that you might want to unpack        
-Intent contentIntent = new Intent( BeaconsActivity.this, SitesActivity.class );
+Intent contentIntent = new Intent( this, YourActivity.class );
 localNotification.setContentIntent( contentIntent );
 
 BCLocalNotificationManager.getInstance().scheduleLocalNotification( localNotification );
