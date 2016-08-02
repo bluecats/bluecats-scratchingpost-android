@@ -163,7 +163,7 @@ Schedule a local notification to fire in a site and categories:
 BCLocalNotification localNotification = new BCLocalNotification( NOTIFICATION_ID );
 
 // can add an optional site to trigger in        
-final BCSite site = new BCSite();
+final BCSite site = BlueCatsSDK.createEmptySite();
 site.setSiteID( "SITE_ID_HERE" );
 site.setName( "SITE_NAME_HERE" );
 
