@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class BeaconSnifferActivity extends AppCompatActivity
+public class BeaconSnifferActivity extends BaseActivity
 {
 	private static final String TAG = "BeaconSnifferActivity";
 

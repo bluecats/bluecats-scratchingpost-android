@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class SitesActivity extends AppCompatActivity
+public class SitesActivity extends BaseActivity
 {
 	private static final String TAG = "SitesActivity";
 	private static final int LOCATION_PERMISSION_REQUEST_CODE = 0;
@@ -53,11 +53,8 @@ public class SitesActivity extends AppCompatActivity
 	{
 		super.onResume();
 
-		Utilities.ensureBluetoothEnabled( this );
-		Utilities.ensureDataAccess( this );
-		Utilities.ensureLocationServicesEnabled( this, LOCATION_PERMISSION_REQUEST_CODE );
-
 		BlueCatsSDK.didEnterForeground();
+
 		mBeaconManager.registerCallback( mBeaconManagerCallback );
 	}
 
@@ -67,22 +64,8 @@ public class SitesActivity extends AppCompatActivity
 		super.onPause();
 
 		BlueCatsSDK.didEnterBackground();
-		mBeaconManager.unregisterCallback( mBeaconManagerCallback );
-	}
 
-	@Override
-	public void onRequestPermissionsResult( final int requestCode, @NonNull final String[] permissions, @NonNull final int[] grantResults )
-	{
-		switch( requestCode )
-		{
-			case LOCATION_PERMISSION_REQUEST_CODE:
-			{
-				if( grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED )
-				{
-					Utilities.ensureLocationServicesEnabled( this, LOCATION_PERMISSION_REQUEST_CODE );
-				}
-			}
-		}
+		mBeaconManager.unregisterCallback( mBeaconManagerCallback );
 	}
 
 	private final BCBeaconManagerCallback mBeaconManagerCallback = new BCBeaconManagerCallback()

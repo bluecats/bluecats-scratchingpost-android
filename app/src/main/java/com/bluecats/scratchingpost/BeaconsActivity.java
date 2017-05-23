@@ -25,7 +25,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-public class BeaconsActivity extends AppCompatActivity
+public class BeaconsActivity extends BaseActivity
 {
 	private static final String TAG = "BeaconsActivity";
 
