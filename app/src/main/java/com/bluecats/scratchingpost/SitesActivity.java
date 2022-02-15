@@ -6,9 +6,11 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
+import android.util.Log;
 
 import com.bluecats.scratchingpost.adapters.SitesAdapter;
 import com.bluecats.scratchingpost.databinding.ActivitySitesBinding;
+import com.bluecats.sdk.BCBeacon;
 import com.bluecats.sdk.BCBeaconManager;
 import com.bluecats.sdk.BCBeaconManagerCallback;
 import com.bluecats.sdk.BCSite;
@@ -70,6 +72,11 @@ public class SitesActivity extends BaseActivity
 
 	private final BCBeaconManagerCallback mBeaconManagerCallback = new BCBeaconManagerCallback()
 	{
+
+		@Override
+		public void didRangeBeacons(List<BCBeacon> beacons) {
+			Log.d(TAG, ""+beacons.size());
+		}
 		@Override
 		public void didEnterSite( final BCSite site )
 		{

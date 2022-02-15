@@ -22,6 +22,8 @@ import com.bluecats.sdk.*;
 public class ApplicationPermissions {
     public static final int REQUEST_CODE_ENABLE_BLUETOOTH = 1001;
     public static final int REQUEST_CODE_LOCATION_PERMISSIONS = 1002;
+    public static final int REQUEST_CODE_BLUETOOTH_SCAN = 1003;
+    public static final int REQUEST_CODE_BLUETOOTH_CONNECT = 1004;
 
     private Activity mActivity;
     private PowerManager mPowerManager;
@@ -39,7 +41,25 @@ public class ApplicationPermissions {
             ActivityCompat.requestPermissions(mActivity, new String[] { permission.ACCESS_FINE_LOCATION, permission.ACCESS_COARSE_LOCATION}, REQUEST_CODE_LOCATION_PERMISSIONS);
         } else if (!BlueCatsSDK.isLocationAuthorized(mActivity)) {
             showLocationServicesAlert();
+        } else if (!bluetoothScanPermissionEnabled()) {
+            ActivityCompat.requestPermissions(mActivity, new String[]{permission.BLUETOOTH_SCAN}, REQUEST_CODE_BLUETOOTH_SCAN);
+        } else if (!bluetoothConnectPermissionEnabled()) {
+            ActivityCompat.requestPermissions(mActivity, new String[]{permission.BLUETOOTH_CONNECT}, REQUEST_CODE_BLUETOOTH_CONNECT);
         }
+    }
+
+    private boolean bluetoothScanPermissionEnabled() {
+//        if (VERSION.SDK_INT < VERSION_CODES.S) {
+//            return true;
+//        }
+        return ContextCompat.checkSelfPermission(mActivity, permission.BLUETOOTH_SCAN) == PackageManager.PERMISSION_GRANTED;
+    }
+
+    private boolean bluetoothConnectPermissionEnabled() {
+//        if (VERSION.SDK_INT < VERSION_CODES.S) {
+//            return true;
+//        }
+        return ContextCompat.checkSelfPermission(mActivity, permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED;
     }
 
     private boolean locationPermissionsEnabled() {

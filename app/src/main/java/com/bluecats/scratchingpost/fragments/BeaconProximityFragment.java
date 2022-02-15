@@ -98,7 +98,7 @@ public class BeaconProximityFragment extends Fragment
 			mBeacons.clear();
 			for( final BCBeacon beacon : beacons )
 			{
-				if( beacon.getSiteID().equals( mSite.getSiteID() ) && beacon.getProximity().equals( mProximity ) )
+				if( beacon.getSiteID() != null && beacon.getSiteID().equals( mSite.getSiteID() ) && beacon.getProximity().equals( mProximity ) )
 				{
 					mBeacons.add( beacon );
 				}

@@ -4,6 +4,9 @@
 
 	<!-- Permissions -->
 	<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+	<uses-permission android:name="android.permission.BLUETOOTH"/>
+	<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+	<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
 
 	<application
 		android:allowBackup="false"
@@ -12,21 +15,21 @@
 		android:theme="@style/AppTheme">
 
 		<!-- Activities -->
-		<activity android:name=".SitesActivity">
+		<activity android:name=".SitesActivity" android:exported="true">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN"/>
 				<category android:name="android.intent.category.LAUNCHER"/>
 			</intent-filter>
 		</activity>
 
-		<activity android:name=".BeaconsActivity"/>
+		<activity android:name=".BeaconsActivity" android:exported="false"/>
 
 		<activity
-			android:name=".BeaconSnifferActivity"
+			android:name=".BeaconSnifferActivity" android:exported="false"
 			android:label="@string/BeaconSnifferActivity.title"/>
 
 		<!-- Services -->
-		<receiver android:name="com.bluecats.sdk.BlueCatsSDKServiceReceiver">
+		<receiver android:name="com.bluecats.sdk.BlueCatsSDKServiceReceiver" android:exported="true">
 			<intent-filter>
 				<action android:name="android.intent.action.BOOT_COMPLETED"/>
 			</intent-filter>

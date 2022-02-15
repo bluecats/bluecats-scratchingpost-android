@@ -1,13 +1,23 @@
 apply plugin: 'com.android.application'
 
 android {
-	compileSdkVersion 24
-	buildToolsVersion '25.0.0'
+	compileSdkVersion 31
+	buildToolsVersion '30.0.3'
+	lintOptions {
+		disable 'InvalidPackage'
+	}
+	packagingOptions {
+		exclude 'META-INF/services/javax.annotation.processing.Processor'
+	}
+	compileOptions {
+		sourceCompatibility 1.8  //butterknife requires java 1.8
+		targetCompatibility 1.8
+	}
 
 	defaultConfig {
 		applicationId "com.bluecats.scratchingpost"
-		minSdkVersion 14
-		targetSdkVersion 24
+		minSdkVersion 24
+		targetSdkVersion 31
 	}
 	buildTypes {
 		release {
@@ -15,16 +25,17 @@ android {
 			proguardFiles getDefaultProguardFile( 'proguard-android-optimize.txt' ), 'proguard-rules.pro'
 		}
 	}
-	dataBinding {
-		enabled true
+	buildFeatures {
+		dataBinding true
 	}
 }
 
 dependencies {
-	compile 'com.bluecats:bluecats-android-sdk:2.0.1'
+	implementation 'com.bluecats:bluecats-android-sdk:2.1.8'
 
+//	implementation project(':bluecats-android-sdk')
 	//Support Libraries
-	compile 'com.android.support:recyclerview-v7:24.1.1'
-	compile 'com.android.support:appcompat-v7:24.1.1'
-	compile 'com.android.support:design:24.1.1'
+	implementation 'com.android.support:recyclerview-v7:26.1.0'
+	implementation 'com.android.support:appcompat-v7:26.1.0'
+	implementation 'com.android.support:design:26.1.0'
 }
